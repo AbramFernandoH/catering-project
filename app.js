@@ -6,7 +6,13 @@ const mongoose = require('mongoose');
 // native modules
 const path = require('path');
 
+// local modules
+const Order = require('./model/order');
+const User = require('./model/user');
+
 const app = express();
+
+mongoose.connect('mongodb://localhost:27017/catering-project', {useNewUrlParser: true, useUnifiedTopology: true});
 
 app.engine('ejs', engine);
 
@@ -30,6 +36,13 @@ app.get('/register', (req, res) => {
 
 app.get('/order', (req, res) => {
   res.render('section/order', { headTitle: 'Order', navLinks: [ 'Home', 'Login', 'Register' ] });
+});
+
+app.post('/order', async (req, res) => {
+  const { day, quantity, message } = req.body;
+  const newOrder = new Order({ day, quantity, message });
+  await newOrder.save();
+  res.redirect('/order');
 });
 
 app.listen(3000, () => { console.log('server running on port 3000') })
