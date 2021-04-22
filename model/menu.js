@@ -11,7 +11,7 @@ const menuSchema = new Schema({
     type: String,
     required: true
   },
-  detail: {
+  description: {
     type: String,
     required: true
   },

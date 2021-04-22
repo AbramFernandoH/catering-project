@@ -1,5 +1,6 @@
 // npm modules
 const express = require('express');
+const moment = require('moment');
 const engine = require('ejs-mate');
 const mongoose = require('mongoose');
 
@@ -43,6 +44,10 @@ app.post('/order', async (req, res) => {
   const newOrder = new Order({ day, quantity, message });
   await newOrder.save();
   res.redirect('/order');
+});
+
+app.get('/menus', (req, res) => {
+  res.render('admin/menus', { headTitle: 'Menus', navLinks: [ 'Home Admin', 'Logout' ] });
 });
 
 app.listen(3000, () => { console.log('server running on port 3000') })

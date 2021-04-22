@@ -1,87 +1,36 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
-  <section id="menu-admin">
-    <div class="menus">
-      <h1>Menus For This Week</h1>
-      <div class="days">
-        <div class="monday">
-          <h3>Monday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Edit</a>
-            </div>
-          </div>
-        </div>
-        <div class="tuesday">
-          <h3>Tuesday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Edit</a>
-            </div>
-          </div>
-        </div>
-        <div class="wednesday">
-          <h3>Wednesday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Edit</a>
-            </div>
-          </div>
-        </div>
-        <div class="thursday">
-          <h3>Thursday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Edit</a>
-            </div>
-          </div>
-        </div>
-        <div class="friday">
-          <h3>Friday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Edit</a>
-            </div>
-          </div>
-        </div>
-        <div class="saturday">
-          <h3>Saturday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Edit</a>
-            </div>
-          </div>
-        </div>
-        <div class="sunday">
-          <h3>Sunday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Edit</a>
-            </div>
-          </div>
-        </div>
+  <section id="menus-form">
+    <h1 class="text-center">Menu</h1>
+    <form action="/menu" method="post" enctype="multipart/form-data" class="menu-admin">
+      <div class="mb-3 title">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" id="title" name="title" autocomplete="off">
       </div>
-    </div>
+      <div class="mb-3 day">
+        <label for="day" class="form-label">Day</label>
+        <select name="day" id="day" class="form-select">
+          <option selected>Select the day</option>
+          <option value="Mon">Monday</option>
+          <option value="Tue">Tuesday</option>
+          <option value="Wed">Wednesday</option>
+          <option value="Thu">Thursday</option>
+          <option value="Fri">Friday</option>
+          <option value="Sat">Saturday</option>
+          <option value="Sun">Sunday</option>
+        </select>
+      </div>
+      <div class="mb-3 images">
+        <label for="images" class="form-label">Choose Images</label>
+        <input type="file" class="form-control" id="images" name="images">
+      </div>
+      <div class="mb-3 description">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+      </div>
+      <div class="mb-3 button">
+        <button class="btn btn-success">Submit</button>
+      </div>
+    </form>
   </section>
 </main>
