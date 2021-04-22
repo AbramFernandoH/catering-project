@@ -1,1 +1,28 @@
 <%- layout('boilerplate/boilerplate') -%>
+<main>
+  <section id="register-main">
+    <h1 class="text-center">Register</h1>
+    <form action="" method="post" class="register-form">
+      <div class="mb-3 register-username">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" name="username" id="username" class="form-control" autocomplete="off">
+      </div>
+      <div class="mb-3 register-email">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" name="email" id="email" class="form-control" autocomplete="off">
+      </div>
+      <div class="mb-3 register-password">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" name="password" id="password" class="form-control">
+      </div>
+      <div class="mb-3 register-address">
+        <label for="address" class="form-label">Address</label>
+        <textarea name="address" id="address" rows="3" class="form-control"></textarea>
+      </div>
+      <div class="mb-3 register-btn">
+        <button class="btn btn-success">Register</button>
+      </div>
+    </form>
+    <h6>Already have an account? <a href="login.html">login</a></h6>
+  </section>
+</main>

@@ -19,4 +19,12 @@ app.get('/login', (req, res) => {
   res.render('section/login', { headTitle: 'Login', navLinks: [ 'Home', 'Register' ] });
 });
 
+app.get('/register', (req, res) => {
+  res.render('section/register', { headTitle: 'Register', navLinks: [ 'Home', 'Login' ] });
+});
+
+app.get('/order', (req, res) => {
+  res.render('section/order', { headTitle: 'Order', navLinks: [ 'Home', 'Login', 'Register' ] });
+});
+
 app.listen(3000, () => { console.log('server running on port 3000') })
