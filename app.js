@@ -1,6 +1,11 @@
+// npm modules
 const express = require('express');
-const path = require('path');
 const engine = require('ejs-mate');
+const mongoose = require('mongoose');
+
+// native modules
+const path = require('path');
+
 const app = express();
 
 app.engine('ejs', engine);
