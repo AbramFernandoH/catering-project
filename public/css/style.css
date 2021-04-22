@@ -1,0 +1,763 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+/* 
+font-style:
+font-family: 'Abril Fatface', cursive;
+font-family: 'PT Sans', sans-serif;
+*/
+
+/* 
+hex-colors:
+#3EB33E
+#8CFF8C
+#74FF74
+#B32D70
+#FF73B9
+*/
+
+/* 
+rgba-colors:
+rgba(62, 179, 62, .7)
+rgba(140, 255, 140, 1)
+rgba(116, 255, 116, 1)
+rgba(179, 45, 112, .7)
+rgba(255, 115, 185, 1)
+*/
+
+/* Header start */
+
+nav{
+  font-family: 'PT Sans', sans-serif;
+  font-weight: 500;
+}
+
+.container-fluid .navbar-brand{
+  color: rgba(179, 45, 112, 1);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+ul.navbar-nav li.nav-item a.nav-link{
+  color: rgba(179, 45, 112, 1);
+  font-weight: bolder;
+}
+
+.burger-btn-nav{
+  background-color: rgb(116, 255, 116);
+  padding: 1% 2%;
+  border: none;
+}
+
+.burger-btn-nav i.fa-bars{
+  font-size: 1.8rem;
+  color: rgba(179, 45, 112, 1);
+}
+
+.latar-nav{
+  background-color: rgb(116, 255, 116);
+}
+
+header{
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.8)), url(/img/headerFood.jpg);
+  background-position: center;
+  background-size: cover;
+}
+
+.heading{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-family: 'Abril Fatface', cursive;
+}
+
+.heading h1{
+  font-weight: 600;
+  font-size: 3rem;
+}
+
+.heading p{
+  margin-top: 2%;
+  color: rgb(206, 206, 206);
+  font-size: 1.2rem;
+}
+
+.heading button{
+  margin-top: 8%;
+  background-color: rgba(179, 45, 112, 1);
+}
+
+.heading button a{
+  color: white;
+  text-decoration: none;
+}
+
+/* Header End */
+
+/* Main start */
+
+main{
+  font-family: 'PT Sans', sans-serif;
+}
+
+/* about us start */
+
+#about-us{
+  min-height: 100vh;
+}
+
+#about-us, #order-menu{
+  padding: 5% 10%;
+}
+
+#about-us div.our-advantages{
+  display: grid;
+  grid-template-rows: repeat(4, auto);
+  row-gap: 2rem;
+}
+
+.fast-delivery, .fresh-food, .delicious, .affordable-prices{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2%;
+  width: 70%;
+  border-radius: 10%;
+}
+
+.fast-delivery h4, .fresh-food h4, .delicious h4, .affordable-prices h4{
+  color: rgba(179, 45, 112, 1);
+  font-weight: 700;
+}
+.fast-delivery p, .fresh-food p, .delicious p, .affordable-prices p{
+  color: rgba(255, 115, 185, 1);
+  font-weight: bolder;
+}
+
+/* About us end */
+
+/* Menus this week start */
+
+#menus-this-week{
+  background-color: rgba(140, 255, 140, .8);
+  padding: 5% 10% 10%;
+}
+
+#menus-this-week .days{
+  margin-top: 2.5rem;
+  display: grid;
+  row-gap: 2rem;
+  grid-template-rows: repeat(7, auto);
+}
+
+#menus-this-week .days h3{
+  font-size: 1.7rem;
+  font-weight: 700;
+  text-align: center;
+  color: rgba(179, 45, 112, 1);
+}
+
+#menus-this-week h1{
+  font-size: 2.1rem;
+  font-weight: 700;
+  text-align: center;
+  color: rgba(255, 115, 185, 1);
+}
+
+#menus-this-week .days .card{
+  width: 90%;
+  border-radius: 1.5rem;
+}
+
+#menus-this-week .card img{
+  height: 23rem;
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+#menus-this-week .card h5{
+  font-weight: 700;
+}
+
+#menus-this-week .card p{
+  color: rgb(110, 110, 110);
+}
+
+#menus-this-week .card .btn{
+  background-color: rgba(255, 115, 185, 1);
+  border-radius: .8rem;
+}
+
+.monday, .tuesday, .wednesday, .thursday, .friday, .saturday, .sunday{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Menus this week end */
+
+/* Testimoni start */
+
+#testimoni{
+  padding: 10% 5%;
+  background-color: rgba(179, 45, 112, .7);
+}
+
+#testimoni h1{
+  color: rgba(140, 255, 140, 1);
+  font-weight: 600;
+  font-size: 2.5rem;
+}
+
+#testimoni .carousel-inner{
+  height: 500px;
+}
+
+#testimoni .carousel-indicators > button{
+  background-color: rgba(140, 255, 140, 1);
+}
+
+#testimoni .carousel-item .slider-img{
+  margin-top: 10%;
+  border-radius: 50%;
+  border: 5px solid rgba(140, 255, 140, 1);
+}
+
+#testimoni .carousel-item .carousel-captio{
+  color: rgb(116, 255, 116);
+  margin-top: 10%;
+  padding: 0 5%;
+}
+
+#testimoni .carousel-item .carousel-captio h5{
+  font-size: 1.5rem;
+  font-weight: bolder;
+}
+
+#testimoni .carousel-item .carousel-captio p{
+  font-size: 1.1rem;
+  margin-top: 5%;
+  color: rgba(140, 255, 140, 1);
+}
+
+i.fa-chevron-left, i.fa-chevron-right{
+  color: rgb(116, 255, 116);
+  font-size: 2rem;
+}
+
+.carousel-inner .carousel-item img{
+  width: 50%;
+  height: 50%;
+}
+
+/* Testimoni end */
+
+/* Order Menu start */
+
+#order-menu{
+  margin-top: 18%;
+}
+
+#order-menu h1{
+  font-weight: 700;
+}
+
+#order-menu .form-menu{
+  display: grid;
+  grid-template-rows: repeat(5, auto);
+}
+
+#order-menu .mb-3 .form-label{
+  font-size: 1.2rem;
+}
+
+#order-menu button{
+  background-color: rgba(179, 45, 112, 1);
+}
+
+/* Order Menu end */
+
+/* Contact Us start */
+
+#contact-us{
+  text-align: center;
+  display: grid;
+  row-gap: 1.3rem;
+  background-color: #66FFBD;
+  padding: 5% 10% 8%;
+}
+
+#contact-us h1{
+  font-weight: 700;
+  color: rgba(179, 45, 112, .9);
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+#contact-us > div{
+  padding: 4% 0;
+  background-color: blanchedalmond;
+  color: rgba(179, 45, 112, 1);
+  font-weight: bolder;
+  border-radius: 2rem;
+}
+
+#contact-us div i{
+  font-size: 3rem;
+  margin-bottom: .8rem;
+}
+
+#contact-us div p{
+  font-size: 1.4rem;
+  color: rgba(255, 82, 169, 0.8);
+}
+
+/* Contact us end */
+/* Main end */
+
+/* Footer start */
+
+footer{
+  padding: 5%;
+}
+
+/* Footer end */
+
+/* Login start */
+
+#login-main{
+  margin-top: 25%;
+  padding: 0 5%;
+}
+
+#login-main h1, #register-main h1{
+  margin-bottom: 10%;
+  font-weight: 700;
+  font-size: 2.5rem;
+}
+
+.login-form{
+  display: grid;
+  grid-template-rows: repeat(3, auto);
+}
+
+.login-form .mb-3 .form-label, .register-form .mb-3 .form-label{
+  font-size: 1.1rem;
+}
+
+.login-form .mb-3 button, .register-form .mb-3 button{
+  margin-top: 2%;
+  font-size: 1.2rem;
+}
+
+/* Login end */
+
+/* Register start */
+
+#register-main{
+  margin: 20% 0 5%;
+  padding: 0 5%;
+}
+
+.register-form{
+  display: grid;
+  grid-template-rows: repeat(5, auto);
+}
+
+/* Register end */
+
+/* Media Queries */
+
+@media screen and (min-width: 515px) {
+  /* header .heading{
+    top: 0;
+    left: 0;
+    padding: 40% 10%;
+    text-align: center;
+    width: 100%;
+  } */
+}
+
+@media screen and (min-width: 590px) {
+  /* header .heading{
+    padding: 34% 12%;
+  } */
+
+  #testimoni .inner .carousel-inner{
+    height: 600px;
+  }
+
+  #testimoni .carousel-item .slider-img{
+    width: 50%;
+    height: 50%;
+  }
+
+  #login-main{
+    margin-top: 20%;
+  }
+
+  #register-main{
+    margin-top: 15%;
+  }
+
+  #order-menu{
+    margin-top: 13%;
+  }
+}
+
+@media screen and (min-width: 660px) {
+  /* header .heading{
+    padding: 30% 14%;
+  } */
+
+  #menus-this-week .days{
+    column-gap: 4%;
+    grid-template: repeat(4, auto) / repeat(2, 50%);
+  }
+
+  #menus-this-week .days .card{
+    width: 100%;
+  }
+  
+  #menus-this-week .card img{
+    height: 11.5rem;
+  }
+}
+
+@media screen and (min-width: 700px){
+  #menus-this-week .card img{
+    height: 17.25rem;
+  }
+
+  #testimoni .inner h1{
+    font-size: 3rem;
+  }
+
+  #testimoni .inner .carousel-inner{
+    height: 710px;
+  }
+
+  #testimoni .carousel-item .carousel-captio h5{
+    font-size: 2rem;
+  }
+  
+  #testimoni .carousel-item .carousel-captio p{
+    font-size: 1.4rem;
+    margin-top: 5%;
+  }
+
+  #login-main{
+    margin-top: 15%;
+  }
+
+  #register-main{
+    margin-top: 10%;
+  }
+
+  #order-menu{
+    margin-top: 10%;
+  }
+}
+
+@media screen and (min-width: 770px) {
+  /* header .heading{
+    padding: 27% 16%;
+  } */
+
+  #contact-us{
+    row-gap: 1.5rem;
+    column-gap: 1.5rem;
+    /* grid-template-areas: 
+    'title title'
+    'whatsapp address'; */
+    grid-template: repeat(2, auto) / repeat(12, 1fr);
+  }
+
+  #contact-us > div{
+    padding: 5%;
+  }
+
+  #contact-us h1{
+    /* grid-area: title; */
+    grid-column: 1 / -1;
+  }
+
+  #contact-us .whatsapp{
+    /* grid-area: whatsapp; */
+    grid-column: 1 / 7;
+  }
+
+  #contact-us .address{
+    /* grid-area: address; */
+    grid-column: 7 / -1;
+  }
+}
+
+@media screen and (min-width: 815px) {
+  /* header .heading{
+    padding: 25% 18%;
+  } */
+}
+
+@media screen and (min-width: 850px) {
+  /* header .heading{
+    padding: 25% 10%;
+  } */
+
+  #menus-this-week .card img{
+    height: 21rem;
+  }
+
+  #menus-this-week h1{
+    font-size: 2.5rem;
+  }
+  
+  #menus-this-week .days h3{
+    font-size: 1.8rem;
+  }
+
+  .card .card-body h5{
+    font-size: 1.5rem;
+  }
+
+  .card .card-body p{
+    font-size: 1.1rem;
+  }
+
+  .card .card-body a{
+    font-size: 1.05rem;
+  }
+
+  #testimoni .inner .carousel-inner{
+    height: 800px;
+  }
+  
+  footer{
+    padding: 2%;
+  }
+
+  #login-main{
+    margin-top: 12%;
+  }
+
+  #login-main h1, #register-main h1{
+    margin-bottom: 5%;
+  }
+
+  #order-menu{
+    margin-top: 8%;
+  }
+
+}
+
+@media screen and (min-width: 992px) {
+  header nav .container-fluid .navbar-brand{
+    font-size: 2rem;
+  }
+
+  ul.navbar-nav li.nav-item a.nav-link{
+    font-size: 1rem;
+  }
+
+  .nav-item:first-child:hover, .nav-item:nth-child(2):hover, .nav-item:nth-child(3):hover, .nav-item:last-child:hover{
+    border-bottom: 3px solid rgba(179, 45, 112, 1);
+    transition: .15s;
+    margin-bottom: -2.5px;
+  }
+
+  header nav.latar-nav{
+    padding: 0 5%;
+  }
+
+  .burger-btn-nav i.fa-bars{
+    display: none;
+  }
+  
+  /* header .heading{
+    padding: 20% 10%;
+  } */
+
+  header .heading h1{
+    font-size: 3.5rem;
+  }
+
+  header .heading p{
+    margin-top: 4;
+    font-size: 1.7rem;
+  }
+
+  header .heading button{
+    margin-top: 5%;
+  }
+
+  header .heading button a{
+    font-size: 1.7rem;
+  }
+
+  #menus-this-week .days{
+    grid-template: repeat(3, auto) / repeat(3, 32%);
+    column-gap: 2%;
+    row-gap: 1%;
+  }
+
+  #menus-this-week .card img{
+    height: 17rem;
+  }
+
+  #testimoni .carousel-item .slider-img{
+    width: 40%;
+    height: 40%;
+  }
+
+  #order-menu h1{
+    font-size: 3rem;
+    font-weight: 700;
+  }
+
+  #order-menu .mb-3 .form-label{
+    font-size: 1.5rem;
+  }
+
+  #total-price{
+    font-size: 1.1rem;
+  }
+
+  #order-menu{
+    margin-top: 5%;
+  }
+
+  #order-menu .form-menu{
+    margin-top: 5%;
+    grid-template: repeat(5, auto) / repeat(12, 1fr);
+    column-gap: 1rem;
+  }
+
+  .days{
+    grid-column: 1 / 7;
+  }
+
+  .quantity{
+    grid-column: 7 / -1;
+  }
+
+  .order-message, .total-price, .submit-order{
+    grid-column: 1 / -1;
+  }
+
+  #contact-us h1{
+    font-size: 3.3rem;
+  }
+
+  #contact-us div i{
+    font-size: 3.3rem;
+  }
+
+  #contact-us div p{
+    font-size: 1.7rem;
+  }
+
+  #login-main, #register-main{
+    padding: 0 8% 2%;
+  }
+
+  #login-main h1, #register-main h1{
+    font-size: 3.3rem;
+  }
+
+  /* .login-form{
+    grid-template: repeat(2, auto) / repeat(2, 1fr);
+    column-gap: 1.5rem;
+    font-size: 1.7rem;
+  }
+
+  .login-form .login-email{
+    grid-column: 1 / 2;
+  }
+
+  .login-form .login-password{
+    grid-column: 2 / -1;
+  }
+
+  .login-form .login-btn{
+    grid-column: 1 / -1;
+  } */
+
+  .login-btn, .register-btn{
+    display: grid;
+    justify-content: center;
+    margin-top: 2.5%;
+  }
+
+  .login-btn .btn, .register-btn .btn{
+    font-size: 2rem;
+  }
+
+  #login-main h6, #register-main h6{
+    text-align: center;
+  }
+
+  #register-main{
+    margin-bottom: 0;
+    margin-top: 8%;
+  }
+
+  #register-main .register-form{
+    grid-template: repeat(4, auto) / repeat(12, 1fr);
+    column-gap: 1rem;
+  }
+
+  .register-username{
+    grid-column: 1 / 7;
+  }
+
+  .register-email{
+    grid-column: 7 / -1;
+  }
+
+  .register-password, .register-address, .register-btn{
+    grid-column: 1 / -1;
+  }
+}
+
+@media screen and (min-width: 1145px) {
+  #testimoni .carousel-item .slider-img{
+    width: 30%;
+    height: 30%;
+  }
+}
+
+@media screen and (min-width: 1230px) {
+  /* header .heading{
+    padding: 17% 10%;
+  } */
+
+  #menus-this-week h1{
+    font-size: 3rem;
+  }
+
+  #menus-this-week .card img{
+    height: 21rem;
+  }
+
+  #menus-this-week .days h3{
+    font-size: 2rem;
+  }
+
+  .card .card-body a{
+    font-size: 1.1rem;
+  }
+
+  #order-menu{
+    margin-top: 3%;
+  }
+
+  #login-main{
+    margin-top: 9%;
+  }
+}

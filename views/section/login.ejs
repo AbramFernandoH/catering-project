@@ -1,0 +1,20 @@
+<%- layout('boilerplate/boilerplate') -%>
+<main>
+  <section id="login-main">
+    <h1 class="text-center">Login</h1>
+    <form action="" method="post" class="login-form">
+      <div class="mb-3 login-email">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" autocomplete="off">
+      </div>
+      <div class="mb-3 login-password">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" name="password" class="form-control">
+      </div>
+      <div class="mb-3 login-btn">
+        <button class="btn btn-success">Login</button>
+      </div>
+    </form>
+    <h6>Do not have an account yet? <a href="/register">register</a></h6>
+  </section>
+</main>

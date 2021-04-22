@@ -1,0 +1,32 @@
+<nav class="navbar navbar-expand-lg navbar-light latar-nav fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="home">Catering</a>
+    <button class="burger-btn-nav" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <% for(let navlink of navLinks){ %>
+          <li class="nav-item">
+            <a class="nav-link" href=""><%= navlink %></a>
+          </li>
+        <% } %>
+        <!-- <li class="nav-item">
+          <a class="nav-link" href="#menus-this-week">Menu This Week</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#testimoni">Testimoni</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="order.html">Order Now</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#contact-us">Contact Us</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="login.html">Log In</a>
+        </li> -->
+      </ul>
+    </div>
+  </div>
+</nav>
