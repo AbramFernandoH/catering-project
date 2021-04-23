@@ -46,6 +46,10 @@ app.post('/order', async (req, res) => {
   res.redirect('/order');
 });
 
+app.get('/admin', (req, res) => {
+  res.render('admin/adminHome', { headTitle: 'Admin', navLinks: [ 'Menus', 'Order', 'Logout' ] });
+});
+
 app.get('/menus', (req, res) => {
   res.render('admin/menus', { headTitle: 'Menus', navLinks: [ 'Home Admin', 'Logout' ] });
 });

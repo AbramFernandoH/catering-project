@@ -390,6 +390,60 @@ footer{
 
 /* Menus form end */
 
+/* admin home start */
+
+#admin-home{
+  margin-top: 10%;
+  padding: 5% 8%;
+  background-color: rgba(140, 255, 140, .8);
+  display: grid;
+  row-gap: 2rem;
+  grid-template-rows: repeat(7, auto);
+}
+
+#admin-home h1{
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: rgba(255, 115, 185, 1);
+}
+
+#admin-home h3{
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: rgba(179, 45, 112, 1);
+}
+
+#admin-home .day .card{
+  width: 90%;
+  border-radius: 1.5rem;
+}
+
+#admin-home .card img{
+  height: 23rem;
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+#admin-home .card h5{
+  font-weight: 700;
+}
+
+#admin-home .card p{
+  color: rgb(110, 110, 110);
+}
+
+#admin-home .card .btn{
+  background-color: rgba(255, 115, 185, 1);
+  border-radius: .8rem;
+}
+
+.day{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* admin home end */
+
 /* Media Queries */
 
 @media screen and (min-width: 515px) {
