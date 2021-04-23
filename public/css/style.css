@@ -394,7 +394,7 @@ footer{
 
 #admin-home{
   margin-top: 10%;
-  padding: 5% 8%;
+  padding: 5% 8% 2%;
   background-color: rgba(140, 255, 140, .8);
   display: grid;
   row-gap: 2rem;
@@ -443,6 +443,19 @@ footer{
 }
 
 /* admin home end */
+
+/* admin home orders start */
+
+#admin-home-orders{
+  padding: 0 8%;
+  margin: 5% 0;
+}
+
+#admin-home-orders .order{
+  margin-top: 1.5rem;
+}
+
+/* admin home orders end */
 
 /* Media Queries */
 
