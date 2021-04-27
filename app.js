@@ -32,6 +32,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
+app.use(flash());
 app.use(session({ secret: 'RahasiaaaSekali', resave: false, saveUninitialized: true, cookie: {
   expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
   maxAge: 1000 * 60 * 60 * 24 * 7
@@ -45,6 +46,11 @@ passport.use(new LocalStrategy(User.authenticate()));
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+app.use((req, res, next) => {
+  res.locals.error = req.flash('error');
+  next();
+})
 
 app.get('/', (req, res) => {
   res.render('home', { headTitle: 'Home', navLinks: [ 'About Us', 'Menu This Week', 'Testimoni', 'Order', 'Contact Us', 'Log In' ] });
@@ -68,7 +74,11 @@ app.post('/register', async (req, res) => {
 });
 
 app.get('/order', (req, res) => {
-  res.render('section/order', { headTitle: 'Order', navLinks: [ 'Home', 'Login', 'Register' ] });
+  if(req.isAuthenticated()){
+    return res.render('section/order', { headTitle: 'Order', navLinks: [ 'Home', 'Login', 'Register' ] });
+  }
+  req.flash('error', 'You have to be authenticated to make an order');
+  res.redirect('/login');
 });
 
 app.post('/order', async (req, res) => {

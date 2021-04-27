@@ -1,6 +1,7 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
   <section id="login-main">
+    <%- include('../partials/flash') %>
     <h1 class="text-center">Login</h1>
     <form action="/login" method="post" class="login-form">
       <div class="mb-3 login-email">
