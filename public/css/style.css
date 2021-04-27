@@ -658,7 +658,7 @@ footer{
     font-size: 1rem;
   }
 
-  .nav-item:first-child:hover, .nav-item:nth-child(2):hover, .nav-item:nth-child(3):hover, .nav-item:last-child:hover{
+  .nav-item:hover{
     border-bottom: 3px solid rgba(179, 45, 112, 1);
     transition: .15s;
     margin-bottom: -2.5px;

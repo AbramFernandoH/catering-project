@@ -1,4 +1,5 @@
 // npm modules
+require('dotenv').config();
 const express = require('express');
 const moment = require('moment');
 const engine = require('ejs-mate');
@@ -33,7 +34,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 app.use(flash());
-app.use(session({ secret: 'RahasiaaaSekali', resave: false, saveUninitialized: true, cookie: {
+app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true, cookie: {
   expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
   maxAge: 1000 * 60 * 60 * 24 * 7
 }
@@ -48,20 +49,26 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
+  res.locals.authUser = req.user;
   res.locals.error = req.flash('error');
   next();
 })
 
 app.get('/', (req, res) => {
-  res.render('home', { headTitle: 'Home', navLinks: [ 'About Us', 'Menu This Week', 'Testimoni', 'Order', 'Contact Us', 'Log In' ] });
+  res.render('home', { headTitle: 'Home' });
 });
 
 app.get('/login', (req, res) => {
-  res.render('section/login', { headTitle: 'Login', navLinks: [ 'Home', 'Register' ] });
+  res.render('section/login', { headTitle: 'Login' });
 });
 
 app.get('/register', (req, res) => {
-  res.render('section/register', { headTitle: 'Register', navLinks: [ 'Home', 'Login' ] });
+  res.render('section/register', { headTitle: 'Register' });
+});
+
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
 });
 
 app.post('/register', async (req, res) => {
@@ -73,9 +80,13 @@ app.post('/register', async (req, res) => {
   });
 });
 
+app.post('/login', passport.authenticate('local', { failureFlash: 'Your username and / or password wrong', failureRedirect: '/login' }), (req, res) => {
+  res.redirect('/');
+});
+
 app.get('/order', (req, res) => {
   if(req.isAuthenticated()){
-    return res.render('section/order', { headTitle: 'Order', navLinks: [ 'Home', 'Login', 'Register' ] });
+    return res.render('section/order', { headTitle: 'Order' });
   }
   req.flash('error', 'You have to be authenticated to make an order');
   res.redirect('/login');
@@ -89,11 +100,11 @@ app.post('/order', async (req, res) => {
 });
 
 app.get('/admin', (req, res) => {
-  res.render('admin/adminHome', { headTitle: 'Admin', navLinks: [ 'Menus', 'Order', 'Logout' ] });
+  res.render('admin/adminHome', { headTitle: 'Admin' });
 });
 
 app.get('/menus', (req, res) => {
-  res.render('admin/menus', { headTitle: 'Menus', navLinks: [ 'Home Admin', 'Logout' ] });
+  res.render('admin/menus', { headTitle: 'Menus' });
 });
 
 app.listen(3000, () => { console.log('server running on port 3000') })

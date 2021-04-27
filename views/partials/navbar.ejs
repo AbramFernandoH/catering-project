@@ -6,26 +6,24 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-        <% for(let navlink of navLinks){ %>
-          <li class="nav-item">
-            <a class="nav-link" href=""><%= navlink %></a>
-          </li>
-        <% } %>
-        <!-- <li class="nav-item">
-          <a class="nav-link" href="#menus-this-week">Menu This Week</a>
+        <li class="nav-item">
+          <a class="nav-link" href="/">Homepage</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#testimoni">Testimoni</a>
+          <a class="nav-link" href="/order">Order</a>
+        </li>
+        <% if(!authUser){ %> 
+        <li class="nav-item">
+          <a class="nav-link" href="/register">Register</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="order.html">Order Now</a>
+          <a class="nav-link" href="/login">Login</a>
         </li>
+        <% } else { %> 
         <li class="nav-item">
-          <a class="nav-link" href="#contact-us">Contact Us</a>
+          <a class="nav-link" href="/logout">Logout</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="login.html">Log In</a>
-        </li> -->
+        <% } %> 
       </ul>
     </div>
   </div>
