@@ -10,7 +10,12 @@ const userSchema = new Schema({
   address: {
     type: String,
     required: true
-  }
+  },
+  admin: Boolean,
+  order: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Order'
+  }]
 });
 
 // adding username, hash and salt from original password

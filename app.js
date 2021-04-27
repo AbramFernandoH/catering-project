@@ -93,8 +93,12 @@ app.get('/order', (req, res) => {
 });
 
 app.post('/order', async (req, res) => {
+  const currentUser = req.user._id;
   const { day, quantity, message } = req.body;
-  const newOrder = new Order({ day, quantity, message });
+  const newOrder = new Order({ day, quantity, message, author: currentUser });
+  const user = await User.findById(currentUser);
+  user.order.push(newOrder);
+  await user.save();
   await newOrder.save();
   res.redirect('/order');
 });

@@ -12,7 +12,15 @@ const orderSchema = new Schema({
     min: 0,
     required: true
   },
-  message: String
+  message: String,
+  author: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  // menu: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: 'Menu'
+  // }
 });
 
 module.exports = mongoose.model('Order', orderSchema);
