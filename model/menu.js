@@ -11,6 +11,7 @@ const menuSchema = new Schema({
     type: String,
     required: true
   },
+  date: Date,
   description: {
     type: String,
     required: true

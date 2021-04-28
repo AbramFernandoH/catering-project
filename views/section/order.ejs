@@ -3,9 +3,9 @@
   <section id="order-menu">
     <h1 class="text-center">Order</h1>
     <form action="/order" method="post" class="form-menu">
-      <div class="mb-3 days">
-        <label for="days-select" class="form-label">Day</label>
-        <select name="day" id="days-select" class="form-select">
+      <div class="mb-3 menu">
+        <label for="menu-day" class="form-label">Menu</label>
+        <select name="menu" id="menu-day" class="form-select">
           <option selected>Select the day</option>
           <option value="Mon">Monday</option>
           <option value="Tue">Tuesday</option>
@@ -27,10 +27,6 @@
       <div class="mb-3 total-price">
         <label for="total-price" class="form-label">Total Prices</label>
         <p id="total-price">Rp 50.000</p>
-      </div>
-      <div class="mb-3">
-        <label for="date" class="form-label">Select the date</label>
-        <input type="date" name="date" id="date" min="<%= minDate %>" max="<%= maxDate %>">
       </div>
       <div class="mb-3 submit-order">
         <button class="btn btn-lg text-white">Submit</button>

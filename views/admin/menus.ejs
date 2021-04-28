@@ -2,27 +2,18 @@
 <main>
   <section id="menus-form">
     <h1 class="text-center">Menu</h1>
-    <form action="/menu" method="post" enctype="multipart/form-data" class="menu-admin">
+    <form action="/menus" method="post" enctype="multipart/form-data" class="menu-admin">
       <div class="mb-3 title">
         <label for="title" class="form-label">Title</label>
         <input type="text" class="form-control" id="title" name="title" autocomplete="off">
       </div>
-      <div class="mb-3 day">
-        <label for="day" class="form-label">Day</label>
-        <select name="day" id="day" class="form-select">
-          <option selected>Select the day</option>
-          <option value="Mon">Monday</option>
-          <option value="Tue">Tuesday</option>
-          <option value="Wed">Wednesday</option>
-          <option value="Thu">Thursday</option>
-          <option value="Fri">Friday</option>
-          <option value="Sat">Saturday</option>
-          <option value="Sun">Sunday</option>
-        </select>
+      <div class="mb-3 menu">
+        <label for="date" class="form-label">Date</label>
+        <input type="date" name="date" id="date" min="<%= minDate %>" max="<%= maxDate %>">
       </div>
       <div class="mb-3 images">
         <label for="images" class="form-label">Choose Images</label>
-        <input type="file" class="form-control" id="images" name="images">
+        <input type="file" class="form-control" id="images" name="images" accept=".jpeg, .jpg, .png, .gif, .svg">
       </div>
       <div class="mb-3 description">
         <label for="description" class="form-label">Description</label>

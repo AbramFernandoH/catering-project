@@ -9,6 +9,7 @@ const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const flash = require('connect-flash');
+const multer = require('multer');
 
 // native modules
 const path = require('path');
@@ -16,8 +17,10 @@ const path = require('path');
 // local modules
 const Order = require('./model/order');
 const User = require('./model/user');
+const Menu = require('./model/menu');
 
 const app = express();
+const upload = multer({ dest: 'uploads/' });
 
 mongoose.connect('mongodb://localhost:27017/catering-project', {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
 
@@ -104,31 +107,38 @@ app.post('/login', passport.authenticate('local', { failureFlash: 'Your username
 
 app.get('/order', async (req, res) => {
   if(req.isAuthenticated()){
-    return res.render('section/order', { headTitle: 'Order', minDate: minDate(), maxDate: maxDate() });
+    return res.render('section/order', { headTitle: 'Order' });
   }
   req.flash('error', 'You have to be authenticated to make an order');
   res.redirect('/login');
 });
 
 app.post('/order', async (req, res) => {
-  // const currentUser = req.user._id;
-  // const { day, quantity, message } = req.body;
-  // const newOrder = new Order({ day, quantity, message, author: currentUser });
-  // const user = await User.findById(currentUser);
-  // user.order.push(newOrder);
-  // await user.save();
-  // await newOrder.save();
-  // res.redirect('/order');
-  const {date} = req.body;
-  res.send(date);
+  const currentUser = req.user._id;
+  const { day, quantity, message } = req.body;
+  const newOrder = new Order({ day, quantity, message, author: currentUser });
+  const user = await User.findById(currentUser);
+  user.order.push(newOrder);
+  await user.save();
+  await newOrder.save();
+  res.redirect('/order');
 });
 
 app.get('/admin', (req, res) => {
   res.render('admin/adminHome', { headTitle: 'Admin' });
 });
 
-app.get('/menus', (req, res) => {
-  res.render('admin/menus', { headTitle: 'Menus' });
+app.get('/menus', async (req, res) => {
+  const date = await Menu.find({});
+  res.render('admin/menus', { headTitle: 'Menus', minDate: minDate(), maxDate: maxDate() });
+});
+
+app.post('/menus', upload.array('images'), (req, res) => {
+  const images = req.files.map(f => ({url: f.path, filename: f.filename}));
+  const newMenu = new Menu({...req.body});
+  newMenu.images = images;
+  newMenu.save();
+  res.redirect('/menus');
 });
 
 app.listen(3000, () => { console.log('server running on port 3000') })

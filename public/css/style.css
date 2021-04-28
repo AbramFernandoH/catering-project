@@ -731,7 +731,7 @@ footer{
     column-gap: 1rem;
   }
 
-  .days{
+  .menu{
     grid-column: 1 / 7;
   }
 
