@@ -48,6 +48,24 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+function minDate(){
+  const todayDate = (moment().format('L')).split('/');
+  const todayYear = todayDate.pop();
+  const todayMonth = todayDate.shift();
+  const todayDay = todayDate.pop();
+  const minDate = `${todayYear}-${todayMonth}-${todayDay}`;
+  return minDate;
+}
+
+function maxDate(){
+  const oneWeekFromNow = (moment().add(7, 'days').calendar()).split('/');
+  const add1WeekYear = oneWeekFromNow.pop();
+  const add1WeekMonth = oneWeekFromNow.shift();
+  const add1WeekDay = oneWeekFromNow.pop();
+  const maxDate = `${add1WeekYear}-${add1WeekMonth}-${add1WeekDay}`;
+  return maxDate;
+}
+
 app.use((req, res, next) => {
   res.locals.authUser = req.user;
   res.locals.error = req.flash('error');
@@ -84,23 +102,25 @@ app.post('/login', passport.authenticate('local', { failureFlash: 'Your username
   res.redirect('/');
 });
 
-app.get('/order', (req, res) => {
+app.get('/order', async (req, res) => {
   if(req.isAuthenticated()){
-    return res.render('section/order', { headTitle: 'Order' });
+    return res.render('section/order', { headTitle: 'Order', minDate: minDate(), maxDate: maxDate() });
   }
   req.flash('error', 'You have to be authenticated to make an order');
   res.redirect('/login');
 });
 
 app.post('/order', async (req, res) => {
-  const currentUser = req.user._id;
-  const { day, quantity, message } = req.body;
-  const newOrder = new Order({ day, quantity, message, author: currentUser });
-  const user = await User.findById(currentUser);
-  user.order.push(newOrder);
-  await user.save();
-  await newOrder.save();
-  res.redirect('/order');
+  // const currentUser = req.user._id;
+  // const { day, quantity, message } = req.body;
+  // const newOrder = new Order({ day, quantity, message, author: currentUser });
+  // const user = await User.findById(currentUser);
+  // user.order.push(newOrder);
+  // await user.save();
+  // await newOrder.save();
+  // res.redirect('/order');
+  const {date} = req.body;
+  res.send(date);
 });
 
 app.get('/admin', (req, res) => {

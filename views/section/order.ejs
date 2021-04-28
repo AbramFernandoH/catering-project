@@ -29,7 +29,8 @@
         <p id="total-price">Rp 50.000</p>
       </div>
       <div class="mb-3">
-        <input type="date" name="" id="">
+        <label for="date" class="form-label">Select the date</label>
+        <input type="date" name="date" id="date" min="<%= minDate %>" max="<%= maxDate %>">
       </div>
       <div class="mb-3 submit-order">
         <button class="btn btn-lg text-white">Submit</button>
