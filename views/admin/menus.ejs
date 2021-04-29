@@ -1,6 +1,9 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
   <section id="menus-form">
+    <% for(let menuDate of menusDate){ %>
+      <p>Menu in <%= menuDate.day %>, <%= menuDate.date %> <%= menuDate.month %> <%= menuDate.year %></p>
+    <% } %>
     <h1 class="text-center">Menu</h1>
     <form action="/menus" method="post" enctype="multipart/form-data" class="menu-admin">
       <div class="mb-3 title">
@@ -13,7 +16,7 @@
       </div>
       <div class="mb-3 images">
         <label for="images" class="form-label">Choose Images</label>
-        <input type="file" class="form-control" id="images" name="images" accept=".jpeg, .jpg, .png, .gif, .svg">
+        <input type="file" class="form-control" id="images" name="images" accept=".jpeg, .jpg, .png, .gif, .svg" multiple>
       </div>
       <div class="mb-3 description">
         <label for="description" class="form-label">Description</label>

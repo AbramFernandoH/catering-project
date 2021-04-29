@@ -199,7 +199,6 @@ main{
   flex-direction: column;
   align-items: center;
 }
-
 /* Menus this week end */
 
 /* Testimoni start */
@@ -457,6 +456,73 @@ footer{
 
 /* admin home orders end */
 
+/* my-orders start */
+
+#my-orders{
+  background-color: rgba(140, 255, 140, .8);
+  padding: 15% 10% 10%;
+}
+
+#my-orders .all-orders{
+  margin-top: 2.5rem;
+  display: grid;
+  row-gap: 2rem;
+}
+
+#my-orders h1{
+  font-size: 2.1rem;
+  font-weight: 700;
+  text-align: center;
+  color: rgba(255, 115, 185, 1);
+}
+
+#my-orders .order{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#my-orders .order h3{
+  font-size: 1.7rem;
+  font-weight: 700;
+  text-align: center;
+  color: rgba(179, 45, 112, 1);
+}
+
+#my-orders .order .card{
+  width: 90%;
+  border-radius: 1.5rem;
+}
+
+#my-orders .card img{
+  height: 23rem;
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+#my-orders .card h5{
+  font-weight: 700;
+}
+
+#my-orders .card p{
+  color: rgb(110, 110, 110);
+}
+
+#my-orders .card .btn{
+  border-radius: .8rem;
+  padding: 2% 5%;
+}
+
+#my-orders .card .btn-edit{
+  border-color: rgba(255, 115, 185, 1);
+  color: rgba(255, 115, 185, 1);
+}
+
+#my-orders .card .btn-cancel{
+  background-color: rgba(255, 115, 185, 1);
+}
+
+/* my-orders end */
+
 /* Media Queries */
 
 @media screen and (min-width: 515px) {
@@ -506,7 +572,7 @@ footer{
     grid-template: repeat(4, auto) / repeat(2, 50%);
   }
 
-  #menus-this-week .days .card{
+  #menus-this-week .days .card, #my-orders .order .card{
     width: 100%;
   }
   
@@ -516,6 +582,15 @@ footer{
 
   #menus-form{
     margin-top: 15%;
+  }
+
+  #my-orders .all-orders{
+    column-gap: 4%;
+    grid-template-columns: repeat(2, 50%);
+  }
+
+  #my-orders .card img{
+    height: 14rem;
   }
 }
 
@@ -603,11 +678,11 @@ footer{
     height: 21rem;
   }
 
-  #menus-this-week h1{
+  #menus-this-week h1, #my-orders h1{
     font-size: 2.5rem;
   }
   
-  #menus-this-week .days h3{
+  #menus-this-week .days h3, #my-orders .order h3{
     font-size: 1.8rem;
   }
 
@@ -621,6 +696,14 @@ footer{
 
   .card .card-body a{
     font-size: 1.05rem;
+  }
+
+  #my-orders{
+    padding-top: 11%;
+  }
+
+  #my-orders .card img{
+    height: 22rem;
   }
 
   #testimoni .inner .carousel-inner{
@@ -852,6 +935,24 @@ footer{
   .menu-admin .button button{
     font-size: 1.4rem;
   }
+
+  #my-orders{
+    padding-top: 8%;
+  }
+
+  #my-orders .all-orders{
+    grid-template-columns: repeat(3, 32%);
+    column-gap: 2%;
+    row-gap: 3%;
+  }
+
+  #my-orders .card img{
+    height: 18rem;
+  }
+
+  #my-orders .card .btn{
+    padding: 3% 6%;
+  }
 }
 
 @media screen and (min-width: 1145px) {
@@ -866,11 +967,11 @@ footer{
     padding: 17% 10%;
   } */
 
-  #menus-this-week h1{
+  #menus-this-week h1, #my-orders h1{
     font-size: 3rem;
   }
 
-  #menus-this-week .card img{
+  #menus-this-week .card img, #my-orders .card img{
     height: 21rem;
   }
 
@@ -888,5 +989,9 @@ footer{
 
   #login-main{
     margin-top: 9%;
+  }
+
+  #my-orders .all-orders h3{
+    font-size: 1.9rem;
   }
 }

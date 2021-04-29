@@ -18,6 +18,7 @@ const path = require('path');
 const Order = require('./model/order');
 const User = require('./model/user');
 const Menu = require('./model/menu');
+const { isLoggedIn } = require('./middleware');
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
@@ -105,15 +106,11 @@ app.post('/login', passport.authenticate('local', { failureFlash: 'Your username
   res.redirect('/');
 });
 
-app.get('/order', async (req, res) => {
-  if(req.isAuthenticated()){
-    return res.render('section/order', { headTitle: 'Order' });
-  }
-  req.flash('error', 'You have to be authenticated to make an order');
-  res.redirect('/login');
+app.get('/order', isLoggedIn, async (req, res) => {
+ res.render('section/order', { headTitle: 'Order' });
 });
 
-app.post('/order', async (req, res) => {
+app.post('/order', isLoggedIn, async (req, res) => {
   const currentUser = req.user._id;
   const { day, quantity, message } = req.body;
   const newOrder = new Order({ day, quantity, message, author: currentUser });
@@ -129,8 +126,10 @@ app.get('/admin', (req, res) => {
 });
 
 app.get('/menus', async (req, res) => {
-  const date = await Menu.find({});
-  res.render('admin/menus', { headTitle: 'Menus', minDate: minDate(), maxDate: maxDate() });
+  const menus = await Menu.find({});
+  const dates = menus.map(menu => (moment(menu.date).toString()).split(' ') );
+  const menusDate = dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
+  res.render('admin/menus', { headTitle: 'Menus', minDate: minDate(), maxDate: maxDate(), menusDate });
 });
 
 app.post('/menus', upload.array('images'), (req, res) => {
@@ -139,6 +138,10 @@ app.post('/menus', upload.array('images'), (req, res) => {
   newMenu.images = images;
   newMenu.save();
   res.redirect('/menus');
+});
+
+app.get('/myorders', (req, res) => {
+  res.render('section/myorders', { headTitle: 'My Orders' })
 });
 
 app.listen(3000, () => { console.log('server running on port 3000') })
