@@ -10,6 +10,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const flash = require('connect-flash');
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // native modules
 const path = require('path');
@@ -21,7 +23,6 @@ const Menu = require('./model/menu');
 const { isLoggedIn } = require('./middleware');
 
 const app = express();
-const upload = multer({ dest: 'uploads/' });
 
 mongoose.connect('mongodb://localhost:27017/catering-project', {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
 
@@ -70,14 +71,33 @@ function maxDate(){
   return maxDate;
 }
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'Catering-Project',
+    allowed_formats: ['jpeg', 'jpg', 'png', 'gif', 'svg']
+  }
+});
+
+const upload = multer({ storage });
+
 app.use((req, res, next) => {
   res.locals.authUser = req.user;
   res.locals.error = req.flash('error');
   next();
 })
 
-app.get('/', (req, res) => {
-  res.render('home', { headTitle: 'Home' });
+app.get('/', async (req, res) => {
+  const menus = await Menu.find({});
+  const dates = menus.map(menu => (moment(menu.date).toString()).split(' ') );
+  const menusDate = dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
+  res.render('home', { headTitle: 'Home', menusDate, menus });
 });
 
 app.get('/login', (req, res) => {
@@ -125,14 +145,11 @@ app.get('/admin', (req, res) => {
   res.render('admin/adminHome', { headTitle: 'Admin' });
 });
 
-app.get('/menus', async (req, res) => {
-  const menus = await Menu.find({});
-  const dates = menus.map(menu => (moment(menu.date).toString()).split(' ') );
-  const menusDate = dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
-  res.render('admin/menus', { headTitle: 'Menus', minDate: minDate(), maxDate: maxDate(), menusDate });
+app.get('/menus', isLoggedIn, (req, res) => {
+  res.render('admin/menus', { headTitle: 'Menus', minDate: minDate(), maxDate: maxDate() });
 });
 
-app.post('/menus', upload.array('images'), (req, res) => {
+app.post('/menus', isLoggedIn, upload.array('images'), (req, res) => {
   const images = req.files.map(f => ({url: f.path, filename: f.filename}));
   const newMenu = new Menu({...req.body});
   newMenu.images = images;
@@ -140,8 +157,13 @@ app.post('/menus', upload.array('images'), (req, res) => {
   res.redirect('/menus');
 });
 
-app.get('/myorders', (req, res) => {
+app.get('/myorders/:userId', isLoggedIn, (req, res) => {
+  const { userId } = req.params;
   res.render('section/myorders', { headTitle: 'My Orders' })
+});
+
+app.post('/myorders', isLoggedIn, (req, res) => {
+
 });
 
 app.listen(3000, () => { console.log('server running on port 3000') })

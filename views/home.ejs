@@ -3,7 +3,7 @@
   <div class="heading">
     <h1 class="text-white">We make the most delicious food in town</h1>
     <p>We deliver your food to your house</p>
-    <button class="btn btn-lg"><a href="">Order Now</a></button>
+    <button class="btn btn-lg"><a href="/order">Order Now</a></button>
   </div>
 </header>
 
@@ -47,83 +47,21 @@
     <div class="menus">
       <h1>Menus For This Week</h1>
       <div class="days">
-        <div class="monday">
-          <h3>Monday</h3>
+        <% for(let menu of menus){ %> 
+        <div class="day">
+          <h3>Day</h3>
           <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
+            <img src="<%= menu.images[0].displayImg %>" class="card-img-top" alt="">
             <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <h5 class="card-title"><%= menu.title %></h5>
+              <p class="card-text"><%= menu.quantity %></p>
+              <p class="card-text"><%= menu.date %></p>
+              <p class="card-text"><%= menu.description %></p>
               <a href="#" class="btn text-white">Order For This Menu</a>
             </div>
           </div>
         </div>
-        <div class="tuesday">
-          <h3>Tuesday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Order For This Menu</a>
-            </div>
-          </div>
-        </div>
-        <div class="wednesday">
-          <h3>Wednesday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Order For This Menu</a>
-            </div>
-          </div>
-        </div>
-        <div class="thursday">
-          <h3>Thursday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Order For This Menu</a>
-            </div>
-          </div>
-        </div>
-        <div class="friday">
-          <h3>Friday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Order For This Menu</a>
-            </div>
-          </div>
-        </div>
-        <div class="saturday">
-          <h3>Saturday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Order For This Menu</a>
-            </div>
-          </div>
-        </div>
-        <div class="sunday">
-          <h3>Sunday</h3>
-          <div class="card">
-            <img src="/img/briyani.jpg" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn text-white">Order For This Menu</a>
-            </div>
-          </div>
-        </div>
+        <% } %> 
       </div>
     </div>
   </section>

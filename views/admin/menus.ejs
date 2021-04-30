@@ -1,9 +1,6 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
   <section id="menus-form">
-    <% for(let menuDate of menusDate){ %>
-      <p>Menu in <%= menuDate.day %>, <%= menuDate.date %> <%= menuDate.month %> <%= menuDate.year %></p>
-    <% } %>
     <h1 class="text-center">Menu</h1>
     <form action="/menus" method="post" enctype="multipart/form-data" class="menu-admin">
       <div class="mb-3 title">

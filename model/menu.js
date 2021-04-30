@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const imagesSchema = new Schema({
+const ImagesSchema = new Schema({
   url: String,
   filename: String
+});
+
+ImagesSchema.virtual('displayImg').get(function(){
+  return this.url.replace('/upload', '/upload/w_2500,h_2500,c_limit');
 })
 
-const menuSchema = new Schema({
+const MenuSchema = new Schema({
   title: {
     type: String,
     required: true
@@ -16,7 +20,7 @@ const menuSchema = new Schema({
     type: String,
     required: true
   },
-  images: [imagesSchema]
+  images: [ImagesSchema]
 });
 
-module.exports = mongoose.model('Menu', menuSchema);
+module.exports = mongoose.model('Menu', MenuSchema);
