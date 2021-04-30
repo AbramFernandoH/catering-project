@@ -71,6 +71,10 @@ function maxDate(){
   return maxDate;
 }
 
+const displayDate = date => {
+  return (moment(date).format('LLLL')).split(' '); // ex. Thursday, December 31, 2020 7:00 AM
+}
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -95,9 +99,12 @@ app.use((req, res, next) => {
 
 app.get('/', async (req, res) => {
   const menus = await Menu.find({});
-  const dates = menus.map(menu => (moment(menu.date).toString()).split(' ') );
-  const menusDate = dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
-  res.render('home', { headTitle: 'Home', menusDate, menus });
+  // const displayDate = function(m){
+  //   const dates = m.map(menu => (moment(menu.date).toString()).split(' ') );
+  //   return dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
+  // };
+  const replaceComma = item => item.replace(',', '');
+  res.render('home', { headTitle: 'Home', menus, displayDate, replaceComma });
 });
 
 app.get('/login', (req, res) => {
@@ -126,8 +133,17 @@ app.post('/login', passport.authenticate('local', { failureFlash: 'Your username
   res.redirect('/');
 });
 
-app.get('/order', isLoggedIn, async (req, res) => {
- res.render('section/order', { headTitle: 'Order' });
+app.get('/order', async (req, res) => {
+  const allMenus = await Menu.find({});
+  function dateValue(date){
+    return moment(date).format('ddd');
+  }
+  res.render('section/order', { headTitle: 'Order', displayDate, allMenus, dateValue });
+});
+
+app.get('/order/:menuId', (req, res) => {
+  const { menuId } = req.params;
+  res.render('section/order', { headTitle: 'Order' });
 });
 
 app.post('/order', isLoggedIn, async (req, res) => {
@@ -145,15 +161,15 @@ app.get('/admin', (req, res) => {
   res.render('admin/adminHome', { headTitle: 'Admin' });
 });
 
-app.get('/menus', isLoggedIn, (req, res) => {
+app.get('/menus', (req, res) => {
   res.render('admin/menus', { headTitle: 'Menus', minDate: minDate(), maxDate: maxDate() });
 });
 
-app.post('/menus', isLoggedIn, upload.array('images'), (req, res) => {
+app.post('/menus', upload.array('images'), async (req, res) => {
   const images = req.files.map(f => ({url: f.path, filename: f.filename}));
   const newMenu = new Menu({...req.body});
   newMenu.images = images;
-  newMenu.save();
+  await newMenu.save();
   res.redirect('/menus');
 });
 

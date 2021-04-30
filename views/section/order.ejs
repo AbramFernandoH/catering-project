@@ -6,14 +6,10 @@
       <div class="mb-3 menu">
         <label for="menu-day" class="form-label">Menu</label>
         <select name="menu" id="menu-day" class="form-select">
-          <option selected>Select the day</option>
-          <option value="Mon">Monday</option>
-          <option value="Tue">Tuesday</option>
-          <option value="Wed">Wednesday</option>
-          <option value="Thu">Thursday</option>
-          <option value="Fri">Friday</option>
-          <option value="Sat">Saturday</option>
-          <option value="Sun">Sunday</option>
+          <% for(let menu of allMenus){ %> 
+          <% const date = displayDate(menu.date) %> 
+          <option value="<%= dateValue(menu.date) %>"><%= date[0] %>  <%= date[1] %> <%= date[2] %>  <%= date[3] %></option>
+          <% } %> 
         </select>
       </div>
       <div class="mb-3 quantity">

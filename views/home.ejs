@@ -49,15 +49,15 @@
       <div class="days">
         <% for(let menu of menus){ %> 
         <div class="day">
-          <h3>Day</h3>
+          <% const date = displayDate(menu.date) %>
+          <h3><%= replaceComma(date[0]) %></h3>
           <div class="card">
             <img src="<%= menu.images[0].displayImg %>" class="card-img-top" alt="">
             <div class="card-body">
               <h5 class="card-title"><%= menu.title %></h5>
-              <p class="card-text"><%= menu.quantity %></p>
-              <p class="card-text"><%= menu.date %></p>
-              <p class="card-text"><%= menu.description %></p>
-              <a href="#" class="btn text-white">Order For This Menu</a>
+              <p class="card-text">Date: <%= date[0] %>  <%= date[1] %> <%= date[2] %>  <%= date[3] %></p>
+              <p class="card-text">Description: <%= menu.description %></p>
+              <a href="/order/<%= menu._id %>" class="btn text-white">Order For This Menu</a>
             </div>
           </div>
         </div>
