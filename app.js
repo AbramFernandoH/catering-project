@@ -75,6 +75,12 @@ const displayDate = date => {
   return (moment(date).format('LLLL')).split(' '); // ex. Thursday, December 31, 2020 7:00 AM
 }
 
+const dateValue = date => {
+  return moment(date).format('ddd');
+}
+
+const replaceComma = item => item.replace(',', '');
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -103,7 +109,6 @@ app.get('/', async (req, res) => {
   //   const dates = m.map(menu => (moment(menu.date).toString()).split(' ') );
   //   return dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
   // };
-  const replaceComma = item => item.replace(',', '');
   res.render('home', { headTitle: 'Home', menus, displayDate, replaceComma });
 });
 
@@ -133,23 +138,15 @@ app.post('/login', passport.authenticate('local', { failureFlash: 'Your username
   res.redirect('/');
 });
 
-app.get('/order', async (req, res) => {
+app.get('/order', isLoggedIn, async (req, res) => {
   const allMenus = await Menu.find({});
-  function dateValue(date){
-    return moment(date).format('ddd');
-  }
   res.render('section/order', { headTitle: 'Order', displayDate, allMenus, dateValue });
-});
-
-app.get('/order/:menuId', (req, res) => {
-  const { menuId } = req.params;
-  res.render('section/order', { headTitle: 'Order' });
 });
 
 app.post('/order', isLoggedIn, async (req, res) => {
   const currentUser = req.user._id;
-  const { day, quantity, message } = req.body;
-  const newOrder = new Order({ day, quantity, message, author: currentUser });
+  const { menu, quantity, message } = req.body;
+  const newOrder = new Order({ menu, quantity, message, author: currentUser, totalPrices: (quantity * 50000) });
   const user = await User.findById(currentUser);
   user.order.push(newOrder);
   await user.save();
@@ -157,7 +154,7 @@ app.post('/order', isLoggedIn, async (req, res) => {
   res.redirect('/order');
 });
 
-app.get('/admin', (req, res) => {
+app.get('/admin', isLoggedIn, (req, res) => {
   res.render('admin/adminHome', { headTitle: 'Admin' });
 });
 
@@ -173,13 +170,14 @@ app.post('/menus', upload.array('images'), async (req, res) => {
   res.redirect('/menus');
 });
 
-app.get('/myorders/:userId', isLoggedIn, (req, res) => {
+app.get('/myorders/:userId', isLoggedIn, async (req, res) => {
   const { userId } = req.params;
-  res.render('section/myorders', { headTitle: 'My Orders' })
+  const userOrders = await User.findOne({_id: userId}).populate({ path: 'order', populate: { path: 'menu' } });
+  res.render('section/myorders', { headTitle: 'My Orders', userOrders, dateValue, displayDate, replaceComma });
 });
 
 app.post('/myorders', isLoggedIn, (req, res) => {
-
+  
 });
 
 app.listen(3000, () => { console.log('server running on port 3000') })
