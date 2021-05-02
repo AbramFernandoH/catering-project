@@ -21,6 +21,7 @@ const Order = require('./model/order');
 const User = require('./model/user');
 const Menu = require('./model/menu');
 const { isLoggedIn } = require('./middleware');
+const user = require('./model/user');
 
 const app = express();
 
@@ -81,6 +82,20 @@ const dateValue = date => {
 
 const replaceComma = item => item.replace(',', '');
 
+const dotTotalPrices = (val) => {
+  const value = val.toString();
+  const totalPrices = [...value];
+  if(totalPrices.length >= 7){
+    totalPrices.reverse().splice(3, 0, '.');
+    totalPrices.splice(7, 0, '.');
+    totalPrices.reverse();
+  } else if (totalPrices.length >= 4){
+    totalPrices.reverse().splice(3, 0, '.');
+    totalPrices.reverse();
+  }
+  return totalPrices.join('');
+}
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -99,6 +114,7 @@ const upload = multer({ storage });
 
 app.use((req, res, next) => {
   res.locals.authUser = req.user;
+  res.locals.success = req.flash('success');
   res.locals.error = req.flash('error');
   next();
 })
@@ -154,6 +170,21 @@ app.post('/order', isLoggedIn, async (req, res) => {
   res.redirect('/order');
 });
 
+app.patch('/order/edit/:orderId', async (req, res) => {
+  const userId = req.user._id;
+  const { orderId } = req.params;
+  try{
+    const { quantity, message } = req.body;
+    const order = await Order.updateOne({_id: orderId}, { quantity, message, totalPrices: (quantity * 50000) });
+    req.flash('success', 'Successfully update the order');
+    res.redirect(`/myorders/${userId}`);
+  } catch(e) {
+    console.log(e);
+    req.flash('error', 'Update fail');
+    res.redirect(`/myorders/${userId}`);
+  }
+});
+
 app.get('/admin', isLoggedIn, (req, res) => {
   res.render('admin/adminHome', { headTitle: 'Admin' });
 });
@@ -170,14 +201,17 @@ app.post('/menus', upload.array('images'), async (req, res) => {
   res.redirect('/menus');
 });
 
+app.get('/myorders/edit/:orderId', isLoggedIn, async (req, res) => {
+  const { orderId } = req.params;
+  const findOrder = await Order.findOne({_id: orderId}).populate('menu');
+  const allMenus = await Menu.find({});
+  res.render('section/orderEdit', { headTitle: 'Edit Order', findOrder, allMenus, displayDate, dotTotalPrices })
+});
+
 app.get('/myorders/:userId', isLoggedIn, async (req, res) => {
   const { userId } = req.params;
   const userOrders = await User.findOne({_id: userId}).populate({ path: 'order', populate: { path: 'menu' } });
-  res.render('section/myorders', { headTitle: 'My Orders', userOrders, dateValue, displayDate, replaceComma });
-});
-
-app.post('/myorders', isLoggedIn, (req, res) => {
-  
+  res.render('section/myorders', { headTitle: 'My Orders', userOrders, dateValue, displayDate, replaceComma, dotTotalPrices });
 });
 
 app.listen(3000, () => { console.log('server running on port 3000') })

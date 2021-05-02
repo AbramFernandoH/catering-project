@@ -1,0 +1,35 @@
+<%- layout('boilerplate/boilerplate') -%>
+<main>
+  <section id="order-menu">
+    <h1 class="text-center">Edit Order</h1>
+    <form action="/order/edit/<%= findOrder._id %>?_method=PATCH" method="post" class="form-menu">
+      <div class="mb-3 menu">
+        <label for="menu-day" class="form-label">Menu</label>
+        <%= const date = displayDate(findOrder.date) %> 
+        <p><%= findOrder.menu.title %> - <%= date[0] %> <%= date[1] %> <%= date[2] %> <%= date[3] %></p>
+      </div>
+      <div class="mb-3 quantity">
+        <label for="quantity" class="form-label">Quantity</label>
+        <input type="number" class="form-control" name="quantity" id="quantity" min="1" value="<%= findOrder.quantity %>" required>
+      </div>
+      <div class="mb-3 order-message">
+        <label for="message" class="form-label">Message (optional)</label>
+        <% if(findOrder.message === ''){ %>
+          <textarea name="message" id="message" rows="3" class="form-control" placeholder="null"></textarea>
+        <% } else { %>  
+          <textarea name="message" id="message" rows="3" class="form-control"><%= findOrder.message %></textarea>
+        <% } %> 
+      </div>
+      <div class="mb-3 total-price">
+        <label for="total-price" class="form-label">Total Prices</label>
+        <p id="total-price">Rp 50.000,00</p>
+      </div>
+      <div class="mb-3 submit-order">
+        <button class="btn btn-lg text-white">Submit</button>
+      </div>
+    </form>
+    <div class="mt-3">
+      <a class="btn btn-danger btn-lg text-white" href="/myorders/<%= authUser.id %>">Cancel</a>
+    </div>
+  </section>
+</main> 
