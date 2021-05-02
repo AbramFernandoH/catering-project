@@ -20,7 +20,9 @@
             <% } %>   
             <p class="card-text">Total Price: Rp <%= dotTotalPrices(userOrder.totalPrices) %>,00</p>
             <a href="/myorders/edit/<%= userOrder._id %>" class="btn btn-edit">Edit</a>
-            <a href="/myorders/cancel/<%= userOrder._id %>" class="btn btn-cancel text-white">Cancel</a>
+            <form action="/order/<%= userOrder._id %>?_method=DELETE" method="post">
+              <button class="btn btn-cancel text-white">Cancel</button>
+            </form>
           </div>
         </div>
       </div>

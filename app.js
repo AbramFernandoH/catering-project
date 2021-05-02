@@ -167,22 +167,8 @@ app.post('/order', isLoggedIn, async (req, res) => {
   user.order.push(newOrder);
   await user.save();
   await newOrder.save();
-  res.redirect('/order');
-});
-
-app.patch('/order/edit/:orderId', async (req, res) => {
-  const userId = req.user._id;
-  const { orderId } = req.params;
-  try{
-    const { quantity, message } = req.body;
-    const order = await Order.updateOne({_id: orderId}, { quantity, message, totalPrices: (quantity * 50000) });
-    req.flash('success', 'Successfully update the order');
-    res.redirect(`/myorders/${userId}`);
-  } catch(e) {
-    console.log(e);
-    req.flash('error', 'Update fail');
-    res.redirect(`/myorders/${userId}`);
-  }
+  req.flash('success', 'Successfully make a new order');
+  res.redirect(`/myorders/${currentUser}`);
 });
 
 app.get('/admin', isLoggedIn, (req, res) => {
@@ -206,6 +192,30 @@ app.get('/myorders/edit/:orderId', isLoggedIn, async (req, res) => {
   const findOrder = await Order.findOne({_id: orderId}).populate('menu');
   const allMenus = await Menu.find({});
   res.render('section/orderEdit', { headTitle: 'Edit Order', findOrder, allMenus, displayDate, dotTotalPrices })
+});
+
+app.patch('/order/:orderId', async (req, res) => {
+  const userId = req.user._id;
+  const { orderId } = req.params;
+  try{
+    const { quantity, message } = req.body;
+    const order = await Order.updateOne({_id: orderId}, { quantity, message, totalPrices: (quantity * 50000) });
+    req.flash('success', 'Successfully update the order');
+    res.redirect(`/myorders/${userId}`);
+  } catch(e) {
+    console.log(e);
+    req.flash('error', 'Update fail');
+    res.redirect(`/myorders/${userId}`);
+  }
+});
+
+app.delete('/order/:orderId', async (req, res) => {
+  const userId = req.user._id;
+  const { orderId } = req.params;
+  await User.updateOne({_id: userId}, { $pull: { order: orderId } });
+  await Order.deleteOne({_id: orderId});
+  req.flash('success', 'Successfully cancel order');
+  res.redirect(`/myorders/${userId}`);
 });
 
 app.get('/myorders/:userId', isLoggedIn, async (req, res) => {

@@ -2,10 +2,10 @@
 <main>
   <section id="order-menu">
     <h1 class="text-center">Edit Order</h1>
-    <form action="/order/edit/<%= findOrder._id %>?_method=PATCH" method="post" class="form-menu">
+    <form action="/order/<%= findOrder._id %>?_method=PATCH" method="post" class="form-menu">
       <div class="mb-3 menu">
         <label for="menu-day" class="form-label">Menu</label>
-        <%= const date = displayDate(findOrder.date) %> 
+        <% const date = displayDate(findOrder.date) %> 
         <p><%= findOrder.menu.title %> - <%= date[0] %> <%= date[1] %> <%= date[2] %> <%= date[3] %></p>
       </div>
       <div class="mb-3 quantity">
@@ -25,7 +25,7 @@
         <p id="total-price">Rp 50.000,00</p>
       </div>
       <div class="mb-3 submit-order">
-        <button class="btn btn-lg text-white">Submit</button>
+        <button class="btn btn-lg text-white">Edit</button>
       </div>
     </form>
     <div class="mt-3">
