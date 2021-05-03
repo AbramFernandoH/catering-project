@@ -192,6 +192,36 @@ app.post('/menus', isLoggedIn, upload.array('images'), async (req, res) => {
   res.redirect('/menus');
 });
 
+app.get('/admin/menu/:menuId', async (req, res) => {
+  const { menuId } = req.params;
+  const allOrders = await Order.find({ menu: menuId }).populate('menu').populate('owner');
+  const menuTitle = allOrders[0].menu.title;
+  const menuDate = allOrders[0].menu.date;
+  res.render('admin/orders', { headTitle: `Orders for ${menuTitle}`, allOrders, displayDate, replaceComma, menuTitle, menuDate });
+});
+
+app.delete('/admin/menu/:menuId', async (req, res) => {
+  try{
+  const { menuId } = req.params;
+  const orders = await Order.find({ menu: menuId }).populate('owner');
+  if(orders.length > 1){
+  for(let order of orders){
+    await User.updateOne({_id: order.owner._id}, { $pull: {order: order._id} });
+  }
+  } else {
+    await User.updateOne({_id: orders[0].owner._id}, { $pull: {order: orders[0]._id} });
+  }
+  await Order.deleteMany({ menu: menuId });
+  await Menu.deleteOne({ _id: menuId });
+  req.flash('success', 'Successfully delete a menu');
+  res.redirect('/admin');
+  }catch(e){
+    console.log(e);
+    req.flash('error', 'Failed to delete a menu');
+    res.redirect('/admin');
+  }
+});
+
 app.get('/myorders/edit/:orderId', isLoggedIn, async (req, res) => {
   const { orderId } = req.params;
   const findOrder = await Order.findOne({_id: orderId}).populate('menu');
@@ -221,12 +251,6 @@ app.get('/myorders/:userId', isLoggedIn, async (req, res) => {
   const { userId } = req.params;
   const userOrders = await User.findOne({_id: userId}).populate({ path: 'order', populate: { path: 'menu' } });
   res.render('section/myorders', { headTitle: 'My Orders', userOrders, dateValue, displayDate, replaceComma, dotTotalPrices });
-});
-
-app.get('/admin/menu', async (req, res) => {
-  const { orderId } = req.query;
-  const allOrders = await Order.find({ menu: orderId }).populate('menu').populate('owner');
-  res.render('admin/orders', { headTitle: 'Order for this menu', allOrders, displayDate, replaceComma });
 });
 
 app.listen(3000, () => { console.log('server running on port 3000') })

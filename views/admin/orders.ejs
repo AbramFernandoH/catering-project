@@ -1,19 +1,23 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
   <section id="admin-home-orders">
-    <h1 class="text-center">Orders</h1>
+    <% const date = displayDate(menuDate) %>
+    <h1 class="text-center">Orders for <%= menuTitle %> on <%= date[0] %> <%= date[1] %> <%= date[2] %>  <%= date[3] %></h1>
     <div class="row">
       <% for(let order of allOrders){ %>
         <div class="col-md-6">
           <div class="order">
             <% const date = displayDate(order.menu.date) %> 
-            <h3 class="text-center"><%= replaceComma(date[0]) %></h3>
+            <h3 class="text-center">By <%= order.owner.username %></h3>
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">Menu: <%= order.menu.title %></h5>
-                <p class="card-text">Date: <%= date[1] %> <%= date[2] %>  <%= date[3] %></p>
-                <p class="card-text">Owner: <%= order.owner.username %></p>
                 <p class="card-text">Number of orders: <%= order.quantity %></p>
+                <p class="card-text">Address: <%= order.owner.address %></p>
+                <% if(order.message === ''){ %>
+                  <p class="text-muted">Message: none</p>
+                <% } else { %>
+                  <p class="card-text">Message: <%= order.message %></p>
+                <% } %>   
                 <a href="#" class="btn btn-success text-white">Accept</a>
                 <a href="#" class="btn btn-danger text-white">Reject</a>
               </div>

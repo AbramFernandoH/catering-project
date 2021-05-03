@@ -448,6 +448,7 @@ footer{
 #admin-home-orders{
   padding: 0 8%;
   margin: 5% 0;
+  min-height: 100vh;
 }
 
 #admin-home-orders .order{
@@ -461,6 +462,7 @@ footer{
 #my-orders{
   background-color: rgba(140, 255, 140, .8);
   padding: 15% 10% 10%;
+  min-height: 100vh;
 }
 
 #my-orders .all-orders{

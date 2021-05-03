@@ -15,7 +15,7 @@
               <h5 class="card-title"><%= menu.title %></h5>
               <p class="card-text">Date: <%= date[0] %>  <%= date[1] %> <%= date[2] %>  <%= date[3] %></p>
               <p class="card-text">Description: <%= menu.description %></p>
-              <a class="btn text-white" href="/admin/menu?orderId=<%= menu._id %>">All Orders This Menu</a>
+              <a class="btn text-white" href="/admin/menu/<%= menu._id %>">All Orders This Menu</a>
               <form action="/admin/menu/<%= menu._id %>?_method=PATCH" method="post">
                 <button class="btn text-white">Edit This Menu</button>
               </form>
