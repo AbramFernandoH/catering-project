@@ -20,8 +20,7 @@ const path = require('path');
 const Order = require('./model/order');
 const User = require('./model/user');
 const Menu = require('./model/menu');
-const { isLoggedIn } = require('./middleware');
-const user = require('./model/user');
+const { isLoggedIn, isAdmin } = require('./middleware');
 
 const app = express();
 
@@ -171,15 +170,19 @@ app.post('/order', isLoggedIn, async (req, res) => {
   res.redirect(`/myorders/${currentUser}`);
 });
 
-app.get('/admin', isLoggedIn, (req, res) => {
+app.get('/admin', isLoggedIn, isAdmin, async (req, res) => {
+  // const userId = req.user._id;
+  // const admin = await User.findOne({_id: userId});
+  // await admin.isAnAdmin(userId);
+  // console.log(admin);
   res.render('admin/adminHome', { headTitle: 'Admin' });
 });
 
-app.get('/menus', (req, res) => {
+app.get('/menus', isLoggedIn, (req, res) => {
   res.render('admin/menus', { headTitle: 'Menus', minDate: minDate(), maxDate: maxDate() });
 });
 
-app.post('/menus', upload.array('images'), async (req, res) => {
+app.post('/menus', isLoggedIn, upload.array('images'), async (req, res) => {
   const images = req.files.map(f => ({url: f.path, filename: f.filename}));
   const newMenu = new Menu({...req.body});
   newMenu.images = images;

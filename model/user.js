@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const passportLocalMongoose = require('passport-local-mongoose');
 
-const userSchema = new Schema({
+const UserSchema = new Schema({
   email: {
     type: String,
     required: true
@@ -18,7 +18,12 @@ const userSchema = new Schema({
   }]
 });
 
-// adding username, hash and salt from original password
-userSchema.plugin(passportLocalMongoose);
+UserSchema.methods.isAnAdmin = async function(){
+  this.admin = true;
+  return await this.save();
+}
 
-module.exports = mongoose.model('User', userSchema);
+// adding username, hash and salt from original password
+UserSchema.plugin(passportLocalMongoose);
+
+module.exports = mongoose.model('User', UserSchema);
