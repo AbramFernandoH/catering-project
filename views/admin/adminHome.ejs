@@ -1,52 +1,31 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
-  <section id="admin-home">
-    <h1 class="text-center">Menus</h1>
-    <%- include('../partials/flash') %> 
-    <div class="day">
-      <h3 class="text-center">Thursday</h3>
-      <div class="card">
-        <img src="/img/briyani.jpg" class="card-img-top" alt="">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="btn text-white">Order For This Menu</a>
+  <section id="menus-this-week">
+    <div class="menus">
+      <h1>Menus</h1>
+      <%- include('../partials/flash') %> 
+      <div class="days">
+        <% for(let menu of allMenus){ %> 
+        <div class="day">
+          <% const date = displayDate(menu.date) %>
+          <h3><%= replaceComma(date[0]) %></h3>
+          <div class="card">
+            <img src="<%= menu.images[0].displayImg %>" class="card-img-top" alt="">
+            <div class="card-body">
+              <h5 class="card-title"><%= menu.title %></h5>
+              <p class="card-text">Date: <%= date[0] %>  <%= date[1] %> <%= date[2] %>  <%= date[3] %></p>
+              <p class="card-text">Description: <%= menu.description %></p>
+              <a class="btn text-white" href="/admin/menu?orderId=<%= menu._id %>">All Orders This Menu</a>
+              <form action="/admin/menu/<%= menu._id %>?_method=PATCH" method="post">
+                <button class="btn text-white">Edit This Menu</button>
+              </form>
+              <form action="/admin/menu/<%= menu._id %>?_method=DELETE" method="post">
+                <button class="btn text-white">Delete This Menu</button>
+              </form>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="day">
-      <h3 class="text-center">Thursday</h3>
-      <div class="card">
-        <img src="/img/briyani.jpg" class="card-img-top" alt="">
-        <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="btn text-white">Order For This Menu</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="admin-home-orders">
-    <h1 class="text-center">Orders</h1>
-    <div class="order monday">
-      <h3 class="text-center">Monday</h3>
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Date: 31/12/2000</h5>
-          <p class="card-text">Number of orders: 999</p>
-          <a href="#" class="btn btn-primary text-white">See Details</a>
-        </div>
-      </div>
-    </div>
-    <div class="order monday">
-      <h3 class="text-center">Monday</h3>
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Date: 31/12/2000</h5>
-          <p class="card-text">Number of orders: 999</p>
-          <a href="#" class="btn btn-primary text-white">See Details</a>
-        </div>
+        <% } %> 
       </div>
     </div>
   </section>

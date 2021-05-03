@@ -119,7 +119,7 @@ app.use((req, res, next) => {
 })
 
 app.get('/', async (req, res) => {
-  const menus = await Menu.find({});
+  const menus = await Menu.find({}).sort({ date: 1 });
   // const displayDate = function(m){
   //   const dates = m.map(menu => (moment(menu.date).toString()).split(' ') );
   //   return dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
@@ -161,7 +161,7 @@ app.get('/order', isLoggedIn, async (req, res) => {
 app.post('/order', isLoggedIn, async (req, res) => {
   const currentUser = req.user._id;
   const { menu, quantity, message } = req.body;
-  const newOrder = new Order({ menu, quantity, message, author: currentUser, totalPrices: (quantity * 50000) });
+  const newOrder = new Order({ menu, quantity, message, owner: currentUser, totalPrices: (quantity * 50000) });
   const user = await User.findById(currentUser);
   user.order.push(newOrder);
   await user.save();
@@ -171,11 +171,13 @@ app.post('/order', isLoggedIn, async (req, res) => {
 });
 
 app.get('/admin', isLoggedIn, isAdmin, async (req, res) => {
-  // const userId = req.user._id;
-  // const admin = await User.findOne({_id: userId});
+  const userId = req.user._id;
+  const user = await User.findOne({_id: userId});
   // await admin.isAnAdmin(userId);
   // console.log(admin);
-  res.render('admin/adminHome', { headTitle: 'Admin' });
+  const allMenus = await Menu.find({});
+  const allOrders = await Order.find({}).populate('menu').populate('owner');
+  res.render('admin/adminHome', { headTitle: 'Admin Homepage', allMenus, allOrders, displayDate, replaceComma });
 });
 
 app.get('/menus', isLoggedIn, (req, res) => {
@@ -200,16 +202,10 @@ app.get('/myorders/edit/:orderId', isLoggedIn, async (req, res) => {
 app.patch('/order/:orderId', async (req, res) => {
   const userId = req.user._id;
   const { orderId } = req.params;
-  try{
-    const { quantity, message } = req.body;
-    const order = await Order.updateOne({_id: orderId}, { quantity, message, totalPrices: (quantity * 50000) });
-    req.flash('success', 'Successfully update the order');
-    res.redirect(`/myorders/${userId}`);
-  } catch(e) {
-    console.log(e);
-    req.flash('error', 'Update fail');
-    res.redirect(`/myorders/${userId}`);
-  }
+  const { quantity, message } = req.body;
+  const order = await Order.updateOne({_id: orderId}, { quantity, message, totalPrices: (quantity * 50000) });
+  req.flash('success', 'Successfully update the order');
+  res.redirect(`/myorders/${userId}`);
 });
 
 app.delete('/order/:orderId', async (req, res) => {
@@ -225,6 +221,12 @@ app.get('/myorders/:userId', isLoggedIn, async (req, res) => {
   const { userId } = req.params;
   const userOrders = await User.findOne({_id: userId}).populate({ path: 'order', populate: { path: 'menu' } });
   res.render('section/myorders', { headTitle: 'My Orders', userOrders, dateValue, displayDate, replaceComma, dotTotalPrices });
+});
+
+app.get('/admin/menu', async (req, res) => {
+  const { orderId } = req.query;
+  const allOrders = await Order.find({ menu: orderId }).populate('menu').populate('owner');
+  res.render('admin/orders', { headTitle: 'Order for this menu', allOrders, displayDate, replaceComma });
 });
 
 app.listen(3000, () => { console.log('server running on port 3000') })

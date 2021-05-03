@@ -11,12 +11,10 @@ const isLoggedIn = (req, res, next) => {
 
 const isAdmin = async (req, res, next) => {
   const userId = req.user._id;
-  const adminUser = await User.findOne({_id: userId});
-  if(adminUser.admin !== true){
+  const user = await User.findOne({_id: userId});
+  if(user.admin !== true){
     req.flash('error', 'You are not authorized');
     return res.redirect('/');
-  } else {
-    req.flash('success', `Welcome back ${adminUser.username}`);
   }
   next();
 }

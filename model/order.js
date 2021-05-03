@@ -8,7 +8,7 @@ const orderSchema = new Schema({
     required: true
   },
   message: String,
-  author: {
+  owner: {
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
