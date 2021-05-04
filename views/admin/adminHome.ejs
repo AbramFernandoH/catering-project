@@ -4,6 +4,7 @@
     <div class="menus">
       <h1>Menus</h1>
       <%- include('../partials/flash') %> 
+      <a href="/menus" class="btn btn-primary btn-lg text-white">Add a menu</a>
       <div class="days">
         <% for(let menu of allMenus){ %> 
         <div class="day">
@@ -15,12 +16,10 @@
               <h5 class="card-title"><%= menu.title %></h5>
               <p class="card-text">Date: <%= date[0] %>  <%= date[1] %> <%= date[2] %>  <%= date[3] %></p>
               <p class="card-text">Description: <%= menu.description %></p>
-              <a class="btn text-white" href="/admin/menu/<%= menu._id %>">All Orders This Menu</a>
-              <form action="/admin/menu/<%= menu._id %>?_method=PATCH" method="post">
-                <button class="btn text-white">Edit This Menu</button>
-              </form>
+              <a class="btn text-white" href="/admin/menu/<%= menu._id %>">All orders fot this menu</a>
+              <a class="btn text-white" href="/admin/menu/edit?menuId=<%= menu._id %>">Edit this menu</a>
               <form action="/admin/menu/<%= menu._id %>?_method=DELETE" method="post">
-                <button class="btn text-white">Delete This Menu</button>
+                <button class="btn text-white">Delete this menu</button>
               </form>
             </div>
           </div>

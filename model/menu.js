@@ -8,7 +8,11 @@ const ImagesSchema = new Schema({
 
 ImagesSchema.virtual('displayImg').get(function(){
   return this.url.replace('/upload', '/upload/w_2500,h_2500,c_limit');
-})
+});
+
+ImagesSchema.virtual('cbImg').get(function(){
+  return this.url.replace('/upload', '/upload/w_250,h_250,c_limit');
+});
 
 const MenuSchema = new Schema({
   title: {
@@ -22,5 +26,9 @@ const MenuSchema = new Schema({
   },
   images: [ImagesSchema]
 });
+
+MenuSchema.post('findOneAndUpdate', async(doc) =>{
+  console.log(doc);
+})
 
 module.exports = mongoose.model('Menu', MenuSchema);

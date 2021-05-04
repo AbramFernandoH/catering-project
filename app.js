@@ -24,7 +24,7 @@ const { isLoggedIn, isAdmin } = require('./middleware');
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/catering-project', {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://localhost:27017/catering-project', {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false});
 
 const db = mongoose.connection;
 db.on('error', console.log.bind(console, "Connection error!"));
@@ -69,6 +69,15 @@ function maxDate(){
   const add1WeekDay = oneWeekFromNow.pop();
   const maxDate = `${add1WeekYear}-${add1WeekMonth}-${add1WeekDay}`;
   return maxDate;
+}
+
+const menuDate = mDate => {
+  const menuDate = moment(mDate).format('L');
+  const dateArr = menuDate.split('/');
+  const month = dateArr[0];
+  const date = dateArr[1];
+  const year = dateArr[2];
+  return `${year}-${month}-${date}`;
 }
 
 const displayDate = date => {
@@ -180,19 +189,25 @@ app.get('/admin', isLoggedIn, isAdmin, async (req, res) => {
   res.render('admin/adminHome', { headTitle: 'Admin Homepage', allMenus, allOrders, displayDate, replaceComma });
 });
 
-app.get('/menus', isLoggedIn, (req, res) => {
+app.get('/menus', isLoggedIn, isAdmin, (req, res) => {
   res.render('admin/menus', { headTitle: 'Menus', minDate: minDate(), maxDate: maxDate() });
 });
 
-app.post('/menus', isLoggedIn, upload.array('images'), async (req, res) => {
+app.post('/menus', isLoggedIn, isAdmin, upload.array('images'), async (req, res) => {
   const images = req.files.map(f => ({url: f.path, filename: f.filename}));
   const newMenu = new Menu({...req.body});
   newMenu.images = images;
   await newMenu.save();
-  res.redirect('/menus');
+  res.redirect('/admin');
 });
 
-app.get('/admin/menu/:menuId', async (req, res) => {
+app.get('/admin/menu/edit', async (req, res) => {
+  const { menuId } = req.query;
+  const menu = await Menu.findOne({_id: menuId});
+  res.render('admin/editMenu', { headTitle: 'Edit Menu', menu, minDate: minDate(), maxDate: maxDate(), menuDate: menuDate(menu.date) });
+});
+
+app.get('/admin/menu/:menuId', isLoggedIn, isAdmin, async (req, res) => {
   const { menuId } = req.params;
   const allOrders = await Order.find({ menu: menuId }).populate('menu').populate('owner');
   const menuTitle = allOrders[0].menu.title;
@@ -200,8 +215,29 @@ app.get('/admin/menu/:menuId', async (req, res) => {
   res.render('admin/orders', { headTitle: `Orders for ${menuTitle}`, allOrders, displayDate, replaceComma, menuTitle, menuDate });
 });
 
-app.delete('/admin/menu/:menuId', async (req, res) => {
-  try{
+app.patch('/admin/menu/:menuId', upload.array('images'), async (req, res) => {
+  const { menuId } = req.params;
+  const menu = await Menu.findByIdAndUpdate({_id: menuId}, { ...req.body });
+  const images = req.files.map(f => ({ url: f.path, filename: f.filename }));
+  menu.images.push(...images);
+  await menu.save();
+  const { deleteImg } = req.body;
+  if(deleteImg){
+    if(deleteImg.length > 1){
+    for(let filename of deleteImg){
+      // delete images from cloudinary
+      await cloudinary.uploader.destroy(filename);
+    }} else {
+      await cloudinary.uploader.destroy(deleteImg[0]);
+    }
+    // delete images from mongoose
+    await menu.updateOne({ $pull: { images: { filename: {$in: deleteImg} } } });
+  }
+  req.flash('success', 'Successfully update a menu');
+  res.redirect('/admin');
+});
+
+app.delete('/admin/menu/:menuId', isLoggedIn, isAdmin, async (req, res) => {
   const { menuId } = req.params;
   const orders = await Order.find({ menu: menuId }).populate('owner');
   if(orders.length > 1){
@@ -212,14 +248,18 @@ app.delete('/admin/menu/:menuId', async (req, res) => {
     await User.updateOne({_id: orders[0].owner._id}, { $pull: {order: orders[0]._id} });
   }
   await Order.deleteMany({ menu: menuId });
-  await Menu.deleteOne({ _id: menuId });
+  const menu = await Menu.findById(menuId);
+  const menuImages = menu.images;
+  if(menuImages.length > 1){
+    for(let images of menuImages){
+      await cloudinary.uploader.destroy(images.filename);
+    } 
+  } else {
+    await cloudinary.uploader.destroy(menuImages[0].filename);
+  }
+  await menu.deleteOne();
   req.flash('success', 'Successfully delete a menu');
   res.redirect('/admin');
-  }catch(e){
-    console.log(e);
-    req.flash('error', 'Failed to delete a menu');
-    res.redirect('/admin');
-  }
 });
 
 app.get('/myorders/edit/:orderId', isLoggedIn, async (req, res) => {
@@ -229,16 +269,16 @@ app.get('/myorders/edit/:orderId', isLoggedIn, async (req, res) => {
   res.render('section/orderEdit', { headTitle: 'Edit Order', findOrder, allMenus, displayDate, dotTotalPrices })
 });
 
-app.patch('/order/:orderId', async (req, res) => {
+app.patch('/order/:orderId', isLoggedIn, async (req, res) => {
   const userId = req.user._id;
   const { orderId } = req.params;
   const { quantity, message } = req.body;
-  const order = await Order.updateOne({_id: orderId}, { quantity, message, totalPrices: (quantity * 50000) });
+  await Order.updateOne({_id: orderId}, { quantity, message, totalPrices: (quantity * 50000) });
   req.flash('success', 'Successfully update the order');
   res.redirect(`/myorders/${userId}`);
 });
 
-app.delete('/order/:orderId', async (req, res) => {
+app.delete('/order/:orderId', isLoggedIn, async (req, res) => {
   const userId = req.user._id;
   const { orderId } = req.params;
   await User.updateOne({_id: userId}, { $pull: { order: orderId } });
