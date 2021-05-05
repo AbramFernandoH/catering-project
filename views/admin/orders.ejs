@@ -4,6 +4,7 @@
     <% const date = displayDate(menuDate) %>
     <h1 class="text-center">Orders for <%= menuTitle %> on <%= date[0] %> <%= date[1] %> <%= date[2] %>  <%= date[3] %></h1>
     <div class="row">
+      <% if(allOrders){ %> 
       <% for(let order of allOrders){ %>
         <div class="col-md-6">
           <div class="order">
@@ -24,6 +25,7 @@
             </div>
           </div>
         </div>
+      <% } %>
       <% } %> 
     </div>
   </section>
