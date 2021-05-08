@@ -9,6 +9,7 @@ const { isLoggedIn } = require('../middleware');
 const { displayDate, dateValue, replaceComma, dotTotalPrices } = require('../helperFunctions');
 
 const storage = require('../cloudinary/cloudinary');
+const menu = require('../model/menu');
 const upload = multer({ storage });
 
 router.get('/', async (req, res) => {
@@ -45,6 +46,22 @@ router.get('/logout', (req, res) => {
   req.logout();
   res.redirect('/');
 });
+
+router.get('/cart', isLoggedIn, async (req, res) => {
+    const carts = req.session.cart;
+    async function menuTitle(title){
+     await Menu.findOne({_id: title});
+    }
+    // if(carts){
+    // if(carts.length > 1){
+    //   for(let cart of carts){
+    //     console.log(menuTitle(cart.menu));
+    //   }
+    // } else {
+    //   console.log(menuTitle(carts.menu));
+    // } console.log(carts)}
+    res.render('section/cart', { headTitle: 'Cart', carts, menuTitle });
+  })
 
 router.get('/myorders/:userId', isLoggedIn, async (req, res) => {
   const { userId } = req.params;

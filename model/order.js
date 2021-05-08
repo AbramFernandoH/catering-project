@@ -20,6 +20,14 @@ const orderSchema = new Schema({
     type: Number,
     min: 50000,
     required: true
+  },
+  status: {
+    type: String,
+    enum: ['Waiting for seller to accept the order', 'Order accepted by seller', 'Order rejected by seller', 'Done']
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['COD', 'Paypal']
   }
 });
 

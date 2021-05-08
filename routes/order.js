@@ -6,21 +6,26 @@ const Order = require('../model/order');
 const { isLoggedIn } = require('../middleware');
 const { displayDate, dateValue, dotTotalPrices } = require('../helperFunctions');
 
-router.route('/')
-  .get( isLoggedIn, async (req, res) => {
+const orderCart = [];
+
+router.get('/', isLoggedIn, async (req, res) => {
     const allMenus = await Menu.find({});
     res.render('section/order', { headTitle: 'Order', displayDate, allMenus, dateValue });
   })
-  .post( isLoggedIn, async (req, res) => {
+router.post('/', isLoggedIn, async (req, res) => {
     const currentUser = req.user._id;
     const { menu, quantity, message } = req.body;
-    const newOrder = new Order({ menu, quantity, message, owner: currentUser, totalPrices: (quantity * 50000) });
-    const user = await User.findById(currentUser);
-    user.order.push(newOrder);
-    await user.save();
-    await newOrder.save();
-    req.flash('success', 'Successfully make a new order');
-    res.redirect(`/myorders/${currentUser}`);
+    req.session.cart = orderCart;
+    const order = { ...req.body, owner: currentUser, totalPrices: quantity * 50000 };
+    orderCart.push(order);
+    res.redirect('/cart');
+    // const newOrder = new Order({ menu, quantity, message, owner: currentUser, totalPrices: (quantity * 50000) });
+    // const user = await User.findById(currentUser);
+    // user.order.push(newOrder);
+    // await user.save();
+    // await newOrder.save();
+    // req.flash('success', 'Successfully make a new order');
+    // res.redirect(`/myorders/${currentUser}`);
   });
 
 router.route('/:orderId')
@@ -43,7 +48,7 @@ router.route('/:orderId')
     const { orderId } = req.params;
     await User.updateOne({_id: userId}, { $pull: { order: orderId } });
     await Order.deleteOne({_id: orderId});
-    req.flash('success', 'Successfully cancel order');
+    req.flash('success', 'Successfully cancel the order');
     res.redirect(`/myorders/${userId}`);
   });
 

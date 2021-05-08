@@ -1,0 +1,22 @@
+<%- layout('boilerplate/boilerplate') -%>
+<main>
+  <section id="order-cart" class="mb-5 container" style="margin-top: 5%;">
+    <div class="row">
+      <% if(carts){ %>
+      <% for(let cart of carts){ %> 
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title"><%= menuTitle(cart.menu) %></h5>
+            <p class="card-text">Quantity : <%= cart.quantity %></p>
+            <p class="card-text">Message: <%= cart.message %></p>
+            <p class="card-text">Total Prices : <%= cart.totalPrices %></p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+      </div>
+      <% } %> 
+      <% } %> 
+    </div>
+  </section>
+</main>
