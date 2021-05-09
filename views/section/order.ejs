@@ -2,14 +2,13 @@
 <main>
   <section id="order-menu">
     <h1 class="text-center">New Order</h1>
-    <form action="/order" method="post" class="form-menu">
+    <form action="/cart" method="post" class="form-menu">
       <div class="mb-3 menu">
         <label for="menu-day" class="form-label">Menu</label>
         <select name="menu" id="menu-day" class="form-select" required>
           <% for(let menu of allMenus){ %> 
-          <% const date = displayDate(menu.date) %> 
-          <option value="<%= menu._id %>"><%= date[0] %>  <%= date[1] %> <%= date[2] %>  <%= date[3] %> - <%= menu.title %></option>
-          <% } %> 
+          <option value="<%= menu._id %>"><%= displayDate(menu.date) %> - <%= menu.title %></option>
+          <% } %>
         </select>
       </div>
       <div class="mb-3 quantity">
@@ -25,7 +24,7 @@
         <p id="total-price">Rp 50.000</p>
       </div>
       <div class="mb-3 submit-order">
-        <button class="btn btn-lg text-white">Submit</button>
+        <button class="btn btn-lg text-white">Add to cart</button>
       </div>
     </form>
   </section>

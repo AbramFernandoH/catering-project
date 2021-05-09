@@ -56,7 +56,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', userRoutes);
+app.use('/', userRoutes.router);
 app.use('/order', orderRoutes);
 app.use('/admin', adminRoutes);
 

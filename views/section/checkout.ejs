@@ -1,22 +1,24 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
   <section id="order-menu">
-    <h1 class="text-center">Edit Order</h1>
-    <form action="/order/<%= findOrder._id %>?_method=PATCH" method="post" class="form-menu">
+    <h1 class="text-center">Order Checkout</h1>
+    <form action="/order" method="post" class="form-menu">
+      <input type="hidden" name="cartId" value="<%= cart.id %>">
       <div class="mb-3 menu">
-        <label for="menu-day" class="form-label">Menu</label>
-        <p><%= findOrder.menu.title %> - <%= displayDate(findOrder.date) %></p>
+        <label class="form-label">Menu</label>
+        <p><%= cart.menuTitle %> - <%= cart.menuDate %></p>
+        <input type="hidden" name="menuId" value="<%= cart.menu %>">
       </div>
       <div class="mb-3 quantity">
         <label for="quantity" class="form-label">Quantity</label>
-        <input type="number" class="form-control" name="quantity" id="quantity" min="1" value="<%= findOrder.quantity %>" required>
+        <input type="number" class="form-control" name="quantity" id="quantity" min="1" value="<%= cart.quantity %>" required>
       </div>
       <div class="mb-3 order-message">
         <label for="message" class="form-label">Message (optional)</label>
-        <% if(findOrder.message === ''){ %>
+        <% if(cart.message === ''){ %>
           <textarea name="message" id="message" rows="3" class="form-control" placeholder="null"></textarea>
         <% } else { %>  
-          <textarea name="message" id="message" rows="3" class="form-control"><%= findOrder.message %></textarea>
+          <textarea name="message" id="message" rows="3" class="form-control"><%= cart.message %></textarea>
         <% } %> 
       </div>
       <div class="mb-3 total-price">
@@ -24,11 +26,11 @@
         <p id="total-price">Rp 50.000,00</p>
       </div>
       <div class="mb-3 submit-order">
-        <button class="btn btn-lg text-white">Edit</button>
+        <button class="btn btn-lg text-white">Checkout</button>
       </div>
     </form>
     <div class="mt-3">
-      <a class="btn btn-danger btn-lg text-white" href="/myorders/<%= authUser.id %>">Cancel</a>
+      <a class="btn btn-danger btn-lg text-white" href="/cart">Cancel</a>
     </div>
   </section>
-</main> 
+</main>

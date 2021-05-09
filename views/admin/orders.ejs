@@ -1,14 +1,12 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
   <section id="admin-home-orders">
-    <% const date = displayDate(menuDate) %>
-    <h1 class="text-center">Orders for <%= menuTitle %> on <%= date[0] %> <%= date[1] %> <%= date[2] %>  <%= date[3] %></h1>
+    <h1 class="text-center">Orders for <%= menuTitle %> on <%= displayDate(menuDate) %></h1>
     <div class="row">
       <% if(allOrders){ %> 
       <% for(let order of allOrders){ %>
         <div class="col-md-6">
           <div class="order">
-            <% const date = displayDate(order.menu.date) %> 
             <h3 class="text-center">By <%= order.owner.username %></h3>
             <div class="card">
               <div class="card-body">

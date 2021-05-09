@@ -6,8 +6,7 @@
     <div class="all-orders">
       <% for(let userOrder of userOrders.order){ %> 
       <div class="order">
-        <% const date = displayDate(userOrder.menu.date) %>
-        <h3><%= date[0] %>  <%= date[1] %> <%= replaceComma(date[2]) %></h3>
+        <h3><%= displayDateDayMonth(userOrder.menu.date) %></h3>
         <div class="card">
           <img src="<%= userOrder.menu.images[0].displayImg %>" class="card-img-top" alt="">
           <div class="card-body">

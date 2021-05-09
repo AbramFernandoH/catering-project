@@ -9,7 +9,7 @@ const Menu = require('../model/menu');
 const User = require('../model/user');
 const Order = require('../model/order');
 const { isLoggedIn, isAdmin } = require('../middleware');
-const { minDate, maxDate, menuDate, displayDate, replaceComma } = require('../helperFunctions');
+const { minDate, maxDate, menuDate, displayDate, displayDay } = require('../helperFunctions');
 
 
 router.get('/', isLoggedIn, isAdmin, async (req, res) => {
@@ -19,7 +19,7 @@ router.get('/', isLoggedIn, isAdmin, async (req, res) => {
   // console.log(admin);
   const allMenus = await Menu.find({});
   const allOrders = await Order.find({}).populate('menu').populate('owner');
-  res.render('admin/adminHome', { headTitle: 'Admin Homepage', allMenus, allOrders, displayDate, replaceComma });
+  res.render('admin/adminHome', { headTitle: 'Admin Homepage', allMenus, allOrders, displayDate, displayDay });
 });
 
 router.route('/menu/create')
@@ -93,7 +93,7 @@ router.get('/orders/:menuId', isLoggedIn, isAdmin, async (req, res) => {
   const findMenu = await Menu.findOne({_id: menuId});
   const menuTitle = findMenu.title;
   const menuDate = findMenu.date;
-  res.render('admin/orders', { headTitle: `Orders for ${menuTitle}`, allOrders, displayDate, replaceComma, menuTitle, menuDate });
+  res.render('admin/orders', { headTitle: `Orders for ${menuTitle}`, allOrders, displayDate, displayDay, menuTitle, menuDate });
 });
 
 module.exports = router;

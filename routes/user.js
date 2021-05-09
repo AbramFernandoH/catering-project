@@ -1,16 +1,19 @@
 const express = require('express');
 const passport = require('passport');
 const multer = require('multer');
+const moment = require('moment');
+const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 
 const Menu = require('../model/menu');
 const User = require('../model/user');
 const { isLoggedIn } = require('../middleware');
-const { displayDate, dateValue, replaceComma, dotTotalPrices } = require('../helperFunctions');
+const { displayDate, dateValue, displayDay, dotTotalPrices } = require('../helperFunctions');
 
 const storage = require('../cloudinary/cloudinary');
-const menu = require('../model/menu');
 const upload = multer({ storage });
+
+const orderCart = [];
 
 router.get('/', async (req, res) => {
   const menus = await Menu.find({}).sort({ date: 1 });
@@ -18,7 +21,7 @@ router.get('/', async (req, res) => {
   //   const dates = m.map(menu => (moment(menu.date).toString()).split(' ') );
   //   return dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
   // };
-  res.render('home', { headTitle: 'Home', menus, displayDate, replaceComma });
+  res.render('home', { headTitle: 'Home', menus, displayDate, displayDay });
 });
 
 router.route('/register')
@@ -47,26 +50,42 @@ router.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-router.get('/cart', isLoggedIn, async (req, res) => {
+router.route('/cart')
+  .get( isLoggedIn, async (req, res) => {
     const carts = req.session.cart;
-    async function menuTitle(title){
-     await Menu.findOne({_id: title});
-    }
-    // if(carts){
-    // if(carts.length > 1){
-    //   for(let cart of carts){
-    //     console.log(menuTitle(cart.menu));
-    //   }
-    // } else {
-    //   console.log(menuTitle(carts.menu));
-    // } console.log(carts)}
-    res.render('section/cart', { headTitle: 'Cart', carts, menuTitle });
+    res.render('section/cart', { headTitle: 'Cart', carts });
   })
+  .post( isLoggedIn, async (req, res) => {
+    const currentUser = req.user._id;
+    const { quantity, menu } = req.body;
+    req.session.cart = orderCart;
+    const findMenu = await Menu.findOne({_id: menu});
+    const date = moment(findMenu.date).format('dddd, MMMM Do, YYYY');
+    const order = { ...req.body, owner: currentUser, totalPrices: quantity * 50000, menuTitle: findMenu.title, menuDate: date, id: uuidv4() };
+    orderCart.push(order);
+    res.redirect('/cart');
+  })
+  .delete( isLoggedIn, async (req, res) => {
+    const { id } = req.query;
+    const findIndex = orderCart.findIndex(cart => cart.id === id);
+    orderCart.splice(findIndex, 1);
+    req.session.cart = orderCart;
+    res.redirect('/cart');
+  });
+
+router.get('/cart/:id', isLoggedIn, async(req, res) => {
+  const { id } = req.params;
+  const cart = orderCart.find(order => order.id === id);
+  res.render('section/checkout', { headTitle: 'Order Checkout', cart });
+});
 
 router.get('/myorders/:userId', isLoggedIn, async (req, res) => {
   const { userId } = req.params;
   const userOrders = await User.findOne({_id: userId}).populate({ path: 'order', populate: { path: 'menu' } });
-  res.render('section/myorders', { headTitle: 'My Orders', userOrders, dateValue, displayDate, replaceComma, dotTotalPrices });
+  function displayDateDayMonth(date){
+    return moment(date).format('dddd, MMMM Do');
+  }
+  res.render('section/myorders', { headTitle: 'My Orders', userOrders, dateValue, displayDate, displayDateDayMonth, dotTotalPrices });
 });
 
-module.exports = router;
+module.exports = {router, orderCart};

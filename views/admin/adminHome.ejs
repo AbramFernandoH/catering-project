@@ -8,13 +8,12 @@
       <div class="days">
         <% for(let menu of allMenus){ %> 
         <div class="day">
-          <% const date = displayDate(menu.date) %>
-          <h3><%= replaceComma(date[0]) %></h3>
+          <h3><%= displayDay(menu.date) %></h3>
           <div class="card">
             <img src="<%= menu.images[0].displayImg %>" class="card-img-top" alt="">
             <div class="card-body">
               <h5 class="card-title"><%= menu.title %></h5>
-              <p class="card-text">Date: <%= date[0] %>  <%= date[1] %> <%= date[2] %>  <%= date[3] %></p>
+              <p class="card-text">Date: <%= displayDate(menu.date) %></p>
               <p class="card-text">Description: <%= menu.description %></p>
               <a class="btn text-white" href="/admin/orders/<%= menu._id %>">All orders fot this menu</a>
               <a class="btn text-white" href="/admin/menu/<%= menu._id %>">Edit this menu</a>

@@ -24,14 +24,14 @@ const menuDate = mDate => {
 }
 
 const displayDate = date => {
-  return (moment(date).format('LLLL')).split(' '); // ex. Thursday, December 31, 2020 7:00 AM
+  return moment(date).format('dddd, MMMM Do, YYYY'); // ex. Thursday, December 31th, 2020
 }
 
 const dateValue = date => {
   return moment(date).format('ddd');
 }
 
-const replaceComma = item => item.replace(',', '');
+const displayDay = date => moment(date).format('dddd');
 
 const dotTotalPrices = (val) => {
   const value = val.toString();
@@ -47,4 +47,4 @@ const dotTotalPrices = (val) => {
   return totalPrices.join('');
 }
 
-module.exports = { calendarFormat, minDate, maxDate, menuDate, displayDate, dateValue, replaceComma, dotTotalPrices }
+module.exports = { calendarFormat, minDate, maxDate, menuDate, displayDate, dateValue, displayDay, dotTotalPrices }
