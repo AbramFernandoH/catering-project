@@ -8,6 +8,7 @@ const router = express.Router();
 
 const Menu = require('../model/menu');
 const User = require('../model/user');
+const Order = require('../model/order');
 const { isLoggedIn } = require('../middleware');
 const { displayDate, dateValue, displayDay, dotTotalPrices } = require('../helperFunctions');
 
@@ -22,9 +23,14 @@ router.get('/', async (req, res) => {
   //   const dates = m.map(menu => (moment(menu.date).toString()).split(' ') );
   //   return dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
   // };
-  // 
-  // const del = await stripe.customers.del( '' );
-  // console.log(del);
+  // list all customers
+  // const allCustomers = await stripe.customers.list({});
+  // const customers = allCustomers.data.map(customer => ({ id: customer.id, name: customer.name, email: customer.email, address: customer.address }));
+  // console.log(customers);
+
+  // delete a customer with a given id
+  // const deleteCustomer = await stripe.customers.del('cus_JSU03SrfK4I5KL');
+  // console.log(deleteCustomer);
   res.render('home', { headTitle: 'Home', menus, displayDate, displayDay });
 });
 
@@ -83,6 +89,35 @@ router.route('/cart')
     req.session.cart = orderCart;
     res.redirect('/cart');
   });
+
+router.get('/paymentConfirm', isLoggedIn, async (req, res) => {
+  res.render('section/confirmPay', { headTitle: 'Confirm Payment' });
+});
+  
+router.post('/create-payment-intent', isLoggedIn, async(req, res) => {
+  const { orderCheckout } = req.session;
+  const user = await User.findById(orderCheckout.owner);
+  const totalPrices = parseInt(`${orderCheckout.totalPrices}00`);
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: totalPrices,
+    currency: 'idr',
+    customer: user.customerId,
+    receipt_email: user.email
+    // status: 'requires_payment_method' / 'requires_confirmation' / 'requires_action'/ 'processing' / 'requires_capture' / 'canceled' / 'succeeded'
+  });
+  const { cartId, menu, quantity, message, paymentMethod } = orderCheckout;
+  const currentUser = req.user._id;
+  const newOrder = new Order({ menu, quantity, message, owner: currentUser, totalPrices: quantity * 50000, paymentMethod, status: 'Waiting for seller to accept the order' });
+  user.order.push(newOrder);
+  await user.save();
+  await newOrder.save();
+  const findIndex = orderCart.findIndex(cart => cart.id === cartId);
+  orderCart.splice(findIndex, 1);
+  req.session.cart = orderCart;
+  req.flash('success', 'Successfully make a new order');
+  delete req.session.orderCheckout;
+  res.send({ clientSecret: paymentIntent.client_secret });
+});
 
 router.get('/cart/:id', isLoggedIn, async(req, res) => {
   const { id } = req.params;

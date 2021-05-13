@@ -27,7 +27,8 @@ const orderSchema = new Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['COD', 'Paypal']
+    enum: ['COD', 'Card'],
+    required: true
   }
 });
 

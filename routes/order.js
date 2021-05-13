@@ -16,17 +16,25 @@ router.route('/')
   })
   .post( isLoggedIn, async (req, res) => {
     const currentUser = req.user._id;
-    const { cartId, menuId, quantity, message } = req.body;
-    const newOrder = new Order({ menu: menuId, quantity, message, owner: currentUser, totalPrices: quantity * 50000 });
-    const user = await User.findById(currentUser);
-    user.order.push(newOrder);
-    await user.save();
-    await newOrder.save();
-    const findIndex = orderCart.findIndex(cart => cart.id === cartId);
-    orderCart.splice(findIndex, 1);
-    req.session.cart = orderCart;
-    req.flash('success', 'Successfully make a new order');
-    res.redirect(`/myorders/${currentUser}`);
+    const { cartId, menuId, quantity, message, paymentMethod } = req.body;
+    if(paymentMethod === 'choose'){
+      req.flash('error', 'Please Choose Payment Method');
+      return res.redirect(`/cart/${cartId}`);
+    } else if(paymentMethod === 'COD'){
+      const newOrder = new Order({ menu: menuId, quantity, message, owner: currentUser, totalPrices: quantity * 50000, paymentMethod, status: 'Waiting for seller to accept the order' });
+      const user = await User.findById(currentUser);
+      user.order.push(newOrder);
+      await user.save();
+      await newOrder.save();
+      const findIndex = orderCart.findIndex(cart => cart.id === cartId);
+      orderCart.splice(findIndex, 1);
+      req.session.cart = orderCart;
+      req.flash('success', 'Successfully make a new order');
+      return res.redirect(`/myorders/${currentUser}`);
+    } else {
+      req.session.orderCheckout = { menu: menuId, quantity, message, owner: currentUser, totalPrices: quantity * 50000, paymentMethod, status: 'Waiting for seller to accept the order', cartId };
+      res.redirect('/paymentConfirm');
+    }
   });
 
 router.route('/:orderId')
