@@ -15,4 +15,4 @@ quantity.addEventListener('input', evt => {
   }
   const total = totalPrices.join('');
   totalPrice.innerText = `Rp ${total},00`;
-})
+});

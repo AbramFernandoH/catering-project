@@ -15,7 +15,8 @@ const UserSchema = new Schema({
   order: [{
     type: Schema.Types.ObjectId,
     ref: 'Order'
-  }]
+  }],
+  customerId: String
 });
 
 UserSchema.methods.isAnAdmin = async function(){

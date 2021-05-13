@@ -2,6 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const multer = require('multer');
 const moment = require('moment');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 
@@ -21,6 +22,9 @@ router.get('/', async (req, res) => {
   //   const dates = m.map(menu => (moment(menu.date).toString()).split(' ') );
   //   return dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
   // };
+  // 
+  // const del = await stripe.customers.del( '' );
+  // console.log(del);
   res.render('home', { headTitle: 'Home', menus, displayDate, displayDay });
 });
 
@@ -30,7 +34,14 @@ router.route('/register')
   })
   .post( async (req, res) => {
     const { username, email, password, address } = req.body;
-    const user = new User({ username, email, address });
+    const newCustomer = await stripe.customers.create({
+      name: username,
+      email: email,
+      address: {
+        line1: address
+      }
+    });
+    const user = new User({ username, email, address, customerId: newCustomer.id });
     const newUser = await User.register(user, password);
     req.login(newUser, () => {
       res.redirect('/');
