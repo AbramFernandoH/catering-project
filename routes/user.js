@@ -96,7 +96,12 @@ router.get('/paymentConfirm', isLoggedIn, async (req, res) => {
   
 router.post('/create-payment-intent', isLoggedIn, async(req, res) => {
   if(req.session.orderCheckout){
-  if(!req.session.paymentIntentId){
+  if(req.session.paymentIntentId){
+    const paymentIntent = await stripe.paymentIntents.retrieve(req.session.paymentIntentId);
+    if(paymentIntent.metadata.cartId === req.session.orderCheckout.cartId){
+      return res.send({ clientSecret: paymentIntent.client_secret });
+    }
+  } else {
     const { orderCheckout } = req.session;
     const user = await User.findById(orderCheckout.owner);
     const totalPrices = parseInt(`${orderCheckout.totalPrices}00`);
@@ -104,13 +109,11 @@ router.post('/create-payment-intent', isLoggedIn, async(req, res) => {
       amount: totalPrices,
       currency: 'idr',
       customer: user.customerId,
-      receipt_email: user.email
+      receipt_email: user.email,
+      metadata: { cartId: orderCheckout.cartId }
       // status: 'requires_payment_method' / 'requires_confirmation' / 'requires_action'/ 'processing' / 'requires_capture' / 'canceled' / 'succeeded'
     });
     req.session.paymentIntentId = paymentIntent.id;
-    return res.send({ clientSecret: paymentIntent.client_secret });
-  } else {
-    const paymentIntent = await stripe.paymentIntents.retrieve(req.session.paymentIntentId);
     res.send({ clientSecret: paymentIntent.client_secret });
   }}
 });
@@ -124,6 +127,9 @@ router.post('/confirmPayment', isLoggedIn, async(req, res) => {
     const { cartId, menu, quantity, message, paymentMethod } = orderCheckout;
     const currentUser = req.user._id;
     const newOrder = new Order({ menu, quantity, message, owner: currentUser, totalPrices: quantity * 50000, paymentMethod, status: 'Waiting for seller to accept the order' });
+    delete paymentIntent.metadata.cartId;
+    const updatePayment = await stripe.paymentIntents.update( paymentIntent.id, {metadata: { orderId: newOrder.id }});
+    newOrder.paymentId = updatePayment.id;
     user.order.push(newOrder);
     await user.save();
     await newOrder.save();
