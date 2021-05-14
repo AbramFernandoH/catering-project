@@ -29,7 +29,8 @@ const orderSchema = new Schema({
     type: String,
     enum: ['COD', 'Card'],
     required: true
-  }
+  },
+  paymentId: String
 });
 
 module.exports = mongoose.model('Order', orderSchema);

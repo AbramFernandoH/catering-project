@@ -21,6 +21,7 @@ router.route('/')
       req.flash('error', 'Please Choose Payment Method');
       return res.redirect(`/cart/${cartId}`);
     } else if(paymentMethod === 'COD'){
+      if(req.session.paymentIntentId){ delete req.session.paymentIntentId }
       const newOrder = new Order({ menu: menuId, quantity, message, owner: currentUser, totalPrices: quantity * 50000, paymentMethod, status: 'Waiting for seller to accept the order' });
       const user = await User.findById(currentUser);
       user.order.push(newOrder);

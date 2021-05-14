@@ -1,10 +1,5 @@
 // A reference to Stripe.js initialized with your real test publishable API key.
-var stripe = Stripe("pk_test_51IpM74FLnMuNCMrMcfLEBIZtzgFncmoO0H0L2INRBLR1zGl5PR0HCiNBoo9lksjH4tSi0hxBoO6seTlgIJA2oylx00ry1fAa3n");
-
-// The items the customer wants to buy
-var purchase = {
-  items: [{ id: "xl-tshirt" }]
-};
+const stripe = Stripe("pk_test_51IpM74FLnMuNCMrMcfLEBIZtzgFncmoO0H0L2INRBLR1zGl5PR0HCiNBoo9lksjH4tSi0hxBoO6seTlgIJA2oylx00ry1fAa3n");
 
 // Disable the button until we have Stripe set up on the page
 document.querySelector("button").disabled = true;
@@ -12,16 +7,15 @@ fetch("/create-payment-intent", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
-  },
-  body: JSON.stringify(purchase)
+  }
 })
   .then(function(result) {
     return result.json();
   })
   .then(function(data) {
-    var elements = stripe.elements();
+    const elements = stripe.elements();
 
-    var style = {
+    const style = {
       base: {
         color: "#32325d",
         fontFamily: 'Arial, sans-serif',
@@ -38,7 +32,7 @@ fetch("/create-payment-intent", {
       }
     };
 
-    var card = elements.create("card", { style: style });
+    const card = elements.create("card", { style: style });
     // Stripe injects an iframe into the DOM
     card.mount("#card-element");
 
@@ -48,7 +42,7 @@ fetch("/create-payment-intent", {
       document.querySelector("#card-error").textContent = event.error ? event.error.message : "";
     });
 
-    var form = document.getElementById("payment-form");
+    const form = document.getElementById("payment-form");
     form.addEventListener("submit", function(event) {
       event.preventDefault();
       // Complete payment when the submit button is clicked
@@ -59,7 +53,7 @@ fetch("/create-payment-intent", {
 // Calls stripe.confirmCardPayment
 // If the card requires authentication Stripe shows a pop-up modal to
 // prompt the user to enter authentication details without leaving your page.
-var payWithCard = function(stripe, card, clientSecret) {
+const payWithCard = function(stripe, card, clientSecret) {
   loading(true);
   stripe
     .confirmCardPayment(clientSecret, {
@@ -81,7 +75,7 @@ var payWithCard = function(stripe, card, clientSecret) {
 /* ------- UI helpers ------- */
 
 // Shows a success message when the payment is complete
-var orderComplete = function(paymentIntentId) {
+const orderComplete = function(paymentIntentId) {
   loading(false);
   document
     .querySelector(".result-message a")
@@ -95,9 +89,9 @@ var orderComplete = function(paymentIntentId) {
 };
 
 // Show the customer the error from Stripe if their card fails to charge
-var showError = function(errorMsgText) {
+const showError = function(errorMsgText) {
   loading(false);
-  var errorMsg = document.querySelector("#card-error");
+  const errorMsg = document.querySelector("#card-error");
   errorMsg.textContent = errorMsgText;
   setTimeout(function() {
     errorMsg.textContent = "";
@@ -105,7 +99,7 @@ var showError = function(errorMsgText) {
 };
 
 // Show a spinner on payment submission
-var loading = function(isLoading) {
+const loading = function(isLoading) {
   if (isLoading) {
     // Disable the button and show a spinner
     document.querySelector("button").disabled = true;

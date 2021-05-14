@@ -1,6 +1,7 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
   <section id="order-cart" class="mb-5 container">
+    <%- include('../partials/flash') %>
     <h1 class="text-center">Orders Cart</h1>
     <div class="row">
       <% if(carts){ %>

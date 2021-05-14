@@ -95,34 +95,59 @@ router.get('/paymentConfirm', isLoggedIn, async (req, res) => {
 });
   
 router.post('/create-payment-intent', isLoggedIn, async(req, res) => {
+  if(req.session.orderCheckout){
+  if(!req.session.paymentIntentId){
+    const { orderCheckout } = req.session;
+    const user = await User.findById(orderCheckout.owner);
+    const totalPrices = parseInt(`${orderCheckout.totalPrices}00`);
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalPrices,
+      currency: 'idr',
+      customer: user.customerId,
+      receipt_email: user.email
+      // status: 'requires_payment_method' / 'requires_confirmation' / 'requires_action'/ 'processing' / 'requires_capture' / 'canceled' / 'succeeded'
+    });
+    req.session.paymentIntentId = paymentIntent.id;
+    return res.send({ clientSecret: paymentIntent.client_secret });
+  } else {
+    const paymentIntent = await stripe.paymentIntents.retrieve(req.session.paymentIntentId);
+    res.send({ clientSecret: paymentIntent.client_secret });
+  }}
+});
+
+router.post('/confirmPayment', isLoggedIn, async(req, res) => {
+  if(req.session.orderCheckout){
   const { orderCheckout } = req.session;
   const user = await User.findById(orderCheckout.owner);
-  const totalPrices = parseInt(`${orderCheckout.totalPrices}00`);
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: totalPrices,
-    currency: 'idr',
-    customer: user.customerId,
-    receipt_email: user.email
-    // status: 'requires_payment_method' / 'requires_confirmation' / 'requires_action'/ 'processing' / 'requires_capture' / 'canceled' / 'succeeded'
-  });
-  const { cartId, menu, quantity, message, paymentMethod } = orderCheckout;
-  const currentUser = req.user._id;
-  const newOrder = new Order({ menu, quantity, message, owner: currentUser, totalPrices: quantity * 50000, paymentMethod, status: 'Waiting for seller to accept the order' });
-  user.order.push(newOrder);
-  await user.save();
-  await newOrder.save();
-  const findIndex = orderCart.findIndex(cart => cart.id === cartId);
-  orderCart.splice(findIndex, 1);
-  req.session.cart = orderCart;
-  req.flash('success', 'Successfully make a new order');
-  delete req.session.orderCheckout;
-  res.send({ clientSecret: paymentIntent.client_secret });
+  const paymentIntent = await stripe.paymentIntents.retrieve(req.session.paymentIntentId);
+  if(paymentIntent.status === 'succeeded'){
+    const { cartId, menu, quantity, message, paymentMethod } = orderCheckout;
+    const currentUser = req.user._id;
+    const newOrder = new Order({ menu, quantity, message, owner: currentUser, totalPrices: quantity * 50000, paymentMethod, status: 'Waiting for seller to accept the order' });
+    user.order.push(newOrder);
+    await user.save();
+    await newOrder.save();
+    const findIndex = orderCart.findIndex(cart => cart.id === cartId);
+    orderCart.splice(findIndex, 1);
+    req.session.cart = orderCart;
+    req.flash('success', 'Payment succeeded, Successfully make a new order');
+    delete req.session.paymentIntentId;
+    delete req.session.orderCheckout;
+    return res.redirect(`/myorders/${req.user.id}`);
+  }
+    req.flash('error', `Payment ${paymentIntent.status}`);
+    return res.redirect('/cart');
+  } else {
+    req.flash('error', 'Please make an order');
+    return res.redirect('/order');
+  }
+
 });
 
 router.get('/cart/:id', isLoggedIn, async(req, res) => {
   const { id } = req.params;
   const cart = orderCart.find(order => order.id === id);
-  res.render('section/checkout', { headTitle: 'Order Checkout', cart });
+  res.render('section/checkout', { headTitle: 'Order Checkout', cart, dotTotalPrices });
 });
 
 router.get('/myorders/:userId', isLoggedIn, async (req, res) => {
