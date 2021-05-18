@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const multer = require('multer');
 const moment = require('moment');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const Xendit = require('xendit-node');
 const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 
@@ -14,6 +14,8 @@ const { displayDate, dateValue, displayDay, dotTotalPrices } = require('../helpe
 const storage = require('../cloudinary/cloudinary');
 const upload = multer({ storage });
 
+const xendit = new Xendit({ secretKey: process.env.XENDIT_SECRET_KEY });
+
 const orderCart = [];
 
 router.get('/', async (req, res) => {
@@ -22,9 +24,7 @@ router.get('/', async (req, res) => {
   //   const dates = m.map(menu => (moment(menu.date).toString()).split(' ') );
   //   return dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
   // };
-  // 
-  // const del = await stripe.customers.del( '' );
-  // console.log(del);
+  
   res.render('home', { headTitle: 'Home', menus, displayDate, displayDay });
 });
 
@@ -33,15 +33,27 @@ router.route('/register')
     res.render('section/register', { headTitle: 'Register' });
   })
   .post( async (req, res) => {
-    const { username, email, password, address } = req.body;
-    const newCustomer = await stripe.customers.create({
-      name: username,
-      email: email,
-      address: {
-        line1: address
-      }
+    const { Customer } = xendit;
+    const customer = new Customer({});
+    const { fullname, username, email, password, address } = req.body;
+    const splitName = fullname.split(' ');
+    let name = {};
+    if(splitName.length > 2){
+      name = { firstName: splitName.shift(), lastName: splitName.pop(), middleName: splitName.join('') };
+    } else if(splitName.length > 1){
+      name = { firstName: splitName[0], lastName: splitName[1] };
+    } else {
+      name = { firstName: splitName[0] }
+    }
+    const firstName = splitName[0];
+    const lastName = splitName[(splitName.length) - 1];
+    const newCustomer = await customer.createCustomer({
+      referenceID: `customer_${uuidv4()}`,
+      givenNames: name.firstName,
+      email,
+      mobileNumber
     });
-    const user = new User({ username, email, address, customerId: newCustomer.id });
+    const user = new User({ username, email, address, customerId: newCustomer.reference_id });
     const newUser = await User.register(user, password);
     req.login(newUser, () => {
       res.redirect('/');
@@ -87,7 +99,7 @@ router.route('/cart')
 router.get('/cart/:id', isLoggedIn, async(req, res) => {
   const { id } = req.params;
   const cart = orderCart.find(order => order.id === id);
-  res.render('section/checkout', { headTitle: 'Order Checkout', cart });
+  res.render('section/checkout', { headTitle: 'Order Checkout', cart, dotTotalPrices });
 });
 
 router.get('/myorders/:userId', isLoggedIn, async (req, res) => {
