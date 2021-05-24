@@ -13,6 +13,14 @@
         <label for="quantity" class="form-label">Quantity</label>
         <input type="number" class="form-control" name="quantity" id="quantity" min="1" value="<%= cart.quantity %>" required>
       </div>
+      <div class="mb-3 payment-method">
+        <label for="payMethod" class="form-label">Payment Method</label>
+        <select name="paymentMethod" id="payMethod" class="form-select">
+          <option value="choose" selected>Choose Payment Method</option>
+          <option value="COD">Cash on Delivery (COD)</option>
+          <option value="Card">Pay via debit / credit card</option>
+        </select>
+      </div>
       <div class="mb-3 order-message">
         <label for="message" class="form-label">Message (optional)</label>
         <% if(cart.message === ''){ %>
@@ -23,7 +31,7 @@
       </div>
       <div class="mb-3 total-price">
         <label for="total-price" class="form-label">Total Prices</label>
-        <p id="total-price">Rp <%= cart.totalPrices %>,00</p>
+        <p id="total-price">Rp <%= dotTotalPrices(cart.totalPrices) %>,00</p>
       </div>
       <div class="mb-3 submit-order">
         <button class="btn btn-lg text-white" id="checkout-btn">Checkout</button>

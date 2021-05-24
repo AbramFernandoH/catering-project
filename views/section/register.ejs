@@ -23,9 +23,25 @@
         <label for="password" class="form-label">Password</label>
         <input type="password" name="password" id="password" class="form-control">
       </div>
-      <div class="mb-3 register-address">
-        <label for="address" class="form-label">Address</label>
-        <textarea name="address" id="address" rows="3" class="form-control"></textarea>
+      <div class="mb-3 register-streetLine1">
+        <label for="streetLine1" class="form-label">Street Line 1</label>
+        <textarea name="addresses[streetLine1]" id="streetLine1" rows="3" class="form-control" placeholder="e.g Jalan Merdeka Barat No.1"></textarea>
+      </div>
+      <div class="mb-3 register-streetLine2">
+        <label for="streetLine2" class="form-label">Street Line 2</label>
+        <textarea name="addresses[streetLine2]" id="streetLine2" rows="3" class="form-control" placeholder="e.g Kecamatan Gambir"></textarea>
+      </div>
+      <div class="mb-3 register-city">
+        <label for="city" class="form-label">City</label>
+        <input type="text" name="addresses[city]" id="city" rows="3" class="form-control" placeholder="e.g Kota Jakarta Pusat">
+      </div>
+      <div class="mb-3 register-province">
+        <label for="province" class="form-label">Province</label>
+        <input type="text" name="addresses[province]" id="province" rows="3" class="form-control" placeholder="e.g Daerah Khusus Ibukota Jakarta">
+      </div>
+      <div class="mb-3 register-postalCode">
+        <label for="postalCode" class="form-label">Postal Code</label>
+        <input type="text" name="addresses[postalCode]" id="postalCode" class="form-control" placeholder="e.g 10110">
       </div>
       <div class="mb-3 register-btn">
         <button class="btn btn-success">Register</button>

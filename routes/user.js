@@ -9,7 +9,7 @@ const router = express.Router();
 const Menu = require('../model/menu');
 const User = require('../model/user');
 const { isLoggedIn } = require('../middleware');
-const { displayDate, dateValue, displayDay, dotTotalPrices } = require('../helperFunctions');
+const { displayDate, dateValue, displayDay, dotTotalPrices, middleName, surname } = require('../helperFunctions');
 
 const storage = require('../cloudinary/cloudinary');
 const upload = multer({ storage });
@@ -24,7 +24,6 @@ router.get('/', async (req, res) => {
   //   const dates = m.map(menu => (moment(menu.date).toString()).split(' ') );
   //   return dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
   // };
-  
   res.render('home', { headTitle: 'Home', menus, displayDate, displayDay });
 });
 
@@ -35,26 +34,57 @@ router.route('/register')
   .post( async (req, res) => {
     const { Customer } = xendit;
     const customer = new Customer({});
-    const { fullname, username, email, password, address } = req.body;
+    const { fullname, username, email, password, addresses, mobileNumber } = req.body;
+    const { streetLine1, streetLine2, city, province, postalCode } = addresses;
     const splitName = fullname.split(' ');
     let name = {};
     if(splitName.length > 2){
-      name = { firstName: splitName.shift(), lastName: splitName.pop(), middleName: splitName.join('') };
+      name = { firstName: splitName.shift(), lastName: splitName.pop(), middleName: splitName.join(' ') };
     } else if(splitName.length > 1){
       name = { firstName: splitName[0], lastName: splitName[1] };
     } else {
-      name = { firstName: splitName[0] }
+      name = { firstName: splitName[0] };
     }
-    const firstName = splitName[0];
-    const lastName = splitName[(splitName.length) - 1];
+    
     const newCustomer = await customer.createCustomer({
       referenceID: `customer_${uuidv4()}`,
       givenNames: name.firstName,
       email,
-      mobileNumber
+      mobileNumber,
+      middleName: middleName(name),
+      surname:  surname(name),
+      addresses: [{
+        streetLine1,
+        streetLine2,
+        city,
+        province,
+        postalCode,
+        country: 'ID'
+      }]
     });
-    const user = new User({ username, email, address, customerId: newCustomer.reference_id });
+
+    const user = new User({ username, email, addresses, customerId: newCustomer.reference_id });
+
+    const { VirtualAcc } = xendit;
+    const va = new VirtualAcc({});
+
+    const bank_code = ['BNI', 'BRI', 'MANDIRI', 'PERMATA', 'BCA', 'SAHABAT_SAMPOERNA'];
+    for(let bank of bank_code){
+      try{
+      const newFixedVA = await va.createFixedVA({
+        externalID: `va_${uuidv4()}`,
+        bankCode: bank,
+        name: fullname,
+        isClosed: true,
+        expectedAmt: 10000
+      });
+      await user.virtualAccounts.push({ vaId: newFixedVA.id, bankCode: bank });
+      console.log(newFixedVA);
+      } catch(err){ console.log(err) }
+    }
+
     const newUser = await User.register(user, password);
+    console.log(newUser);
     req.login(newUser, () => {
       res.redirect('/');
     });
