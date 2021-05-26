@@ -1,0 +1,12 @@
+<%- layout('boilerplate/boilerplate') -%>
+<main>
+  <section id="choose-payment-method">
+    <form action="/payment?pm=<%= method %>" method="post">
+      <% if(method === 'va'){ %>
+        <h3>Virtual Account</h3>
+      <% } else if(method === 'ew'){ %>
+        <h3>E - Wallet ( OVO / SHOPEEPAY / DANA / LINKAJA )</h3>
+      <% } %> 
+    </form>
+  </section>
+</main>

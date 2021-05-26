@@ -4,10 +4,12 @@ const multer = require('multer');
 const moment = require('moment');
 const Xendit = require('xendit-node');
 const { v4: uuidv4 } = require('uuid');
+const fetch = require('node-fetch');
 const router = express.Router();
 
 const Menu = require('../model/menu');
 const User = require('../model/user');
+const Order = require('../model/order');
 const { isLoggedIn } = require('../middleware');
 const { displayDate, dateValue, displayDay, dotTotalPrices, middleName, surname } = require('../helperFunctions');
 
@@ -35,7 +37,6 @@ router.route('/register')
     const { Customer } = xendit;
     const customer = new Customer({});
     const { fullname, username, email, password, addresses, mobileNumber } = req.body;
-    const { streetLine1, streetLine2, city, province, postalCode } = addresses;
     const splitName = fullname.split(' ');
     let name = {};
     if(splitName.length > 2){
@@ -53,14 +54,7 @@ router.route('/register')
       mobileNumber,
       middleName: middleName(name),
       surname:  surname(name),
-      addresses: [{
-        streetLine1,
-        streetLine2,
-        city,
-        province,
-        postalCode,
-        country: 'ID'
-      }]
+      addresses: [{ country: 'ID', ...addresses }]
     });
 
     const user = new User({ username, email, addresses, customerId: newCustomer.reference_id });
@@ -79,12 +73,10 @@ router.route('/register')
         expectedAmt: 10000
       });
       await user.virtualAccounts.push({ vaId: newFixedVA.id, bankCode: bank });
-      console.log(newFixedVA);
       } catch(err){ console.log(err) }
     }
 
     const newUser = await User.register(user, password);
-    console.log(newUser);
     req.login(newUser, () => {
       res.redirect('/');
     });
@@ -124,6 +116,105 @@ router.route('/cart')
     orderCart.splice(findIndex, 1);
     req.session.cart = orderCart;
     res.redirect('/cart');
+  });
+
+router.route('/payment')
+  .get(isLoggedIn, async (req, res) => {
+    const { method, cartId } = req.query;
+    const cart = orderCart.find(cart => cart.id === cartId);
+    if(method === 'card'){
+      return res.render('section/paymentCard', { headTitle: `${method} Payment`, method, cart });
+    }
+    res.render('section/payment', { headTitle: `${method} Payment`, method, cart });
+  })
+  .post(isLoggedIn, async (req, res) => {
+    const { paymentMethod, cartId } = req.query;
+    const cart = orderCart.find(cart => cart.id === cartId);
+    const { menu, quantity, message, totalPrices, owner } = cart;
+    const currentUser = req.user._id;
+    switch (paymentMethod) {
+      case 'card':
+        const { amount, xenditToken } = req.body;
+        try{
+        const fetchh = await fetch('https://api.xendit.co/credit_card_charges', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': process.env.BASE64_FORMAT },
+          body: JSON.stringify({ external_id: `card_charges_${uuidv4()}`, token_id: xenditToken, amount })
+        });
+        const result = await fetchh.json();
+        
+        if(result.status === 'CAPTURED'){
+          const newOrder = new Order({ menu, quantity, message, owner, totalPrices, status: 'Waiting for seller to accept the order' });
+          newOrder.payment.push({ paymentMethod: 'CARD', paymentDate: result.created, chargeId: result.id });
+          const user = await User.findById(currentUser);
+          user.order.push(newOrder);
+          await user.save();
+          await newOrder.save();
+          const findIndex = orderCart.findIndex(cart => cart.id === cartId);
+          orderCart.splice(findIndex, 1);
+          req.session.cart = orderCart;
+          req.flash('success', 'Successfully make a new order');
+          return res.redirect(`/myorders/${currentUser}`);
+        }
+
+        if(result.status === 'FAILED'){
+          switch (result.failure_reason) {
+            case 'EXPIRED_CARD':
+              req.flash('error', `${result.failure_reason}, your card is expired`);
+              res.redirect(`/payment?method=card&cartId=${cartId}`);
+              break;
+              
+            case 'CARD_DECLINED':
+              req.flash('error', `${result.failure_reason}, your card has been declined by the issuing bank`);
+              res.redirect(`/payment?method=card&cartId=${cartId}`);
+              break;
+
+            case 'CARD_DECLINED':
+              req.flash('error', `${result.failure_reason}, your card has been declined by the issuing bank`);
+              res.redirect(`/payment?method=card&cartId=${cartId}`);
+              break;
+
+            case 'PROCESSOR_ERROR':
+              req.flash('error', `${result.failure_reason}, the charge failed because there is an integration issue between your card and the bank`);
+              res.redirect(`/payment?method=card&cartId=${cartId}`);
+              break;
+
+            case 'INSUFFICIENT_BALANCE':
+              req.flash('error', `${result.failure_reason}, your card does not have enough balance to complete the payment`);
+              res.redirect(`/payment?method=card&cartId=${cartId}`);
+              break;
+              
+            case 'STOLEN_CARD':
+              req.flash('error', `${result.failure_reason}, the charge is failed because you are using stolen card`);
+              res.redirect(`/payment?method=card&cartId=${cartId}`);
+              break;
+
+            case 'INACTIVE_CARD':
+              req.flash('error', `${result.failure_reason}, your card is inactive`);
+              res.redirect(`/payment?method=card&cartId=${cartId}`);
+              break;
+
+            case 'TEMPORARY_SYSTEM_ERROR':
+              req.flash('error', `${result.failure_reason}, there is a temporary system error when the charge attempts happens`);
+              res.redirect(`/payment?method=card&cartId=${cartId}`);
+              break;
+          
+            default:
+              req.flash('error', `${result.failure_reason}, your card is below the minimum limit or above the maximum limit`);
+              res.redirect(`/payment?method=card&cartId=${cartId}`);
+              break;
+          }
+          
+        }
+        } catch(err){
+          console.log(err);
+        }
+        
+        break;
+    
+      default:
+        break;
+    }
   });
 
 router.get('/cart/:id', isLoggedIn, async(req, res) => {

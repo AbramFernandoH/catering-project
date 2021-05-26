@@ -1,6 +1,7 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
   <section id="order-menu">
+    <%- include('../partials/flash') %>
     <h1 class="text-center">Order Checkout</h1>
     <form action="/order" method="post" class="form-menu">
       <input type="hidden" name="cartId" value="<%= cart.id %>">
@@ -14,11 +15,13 @@
         <input type="number" class="form-control" name="quantity" id="quantity" min="1" value="<%= cart.quantity %>" required>
       </div>
       <div class="mb-3 payment-method">
-        <label for="payMethod" class="form-label">Payment Method</label>
-        <select name="paymentMethod" id="payMethod" class="form-select">
-          <option value="choose" selected>Choose Payment Method</option>
-          <option value="COD">Cash on Delivery (COD)</option>
-          <option value="Card">Pay via debit / credit card</option>
+        <label for="payment-method" class="form-label">Payment Method</label>
+        <select class="form-select" id="payment-method" name="paymentMethod">
+          <option value="." selected>Please select one of payment method</option>
+          <option value="COD">CoD ( Cash on Delivery )</option>
+          <option value="CARD">Debit / Credit Card ( Visa, Mastercard, JCB )</option>
+          <option value="VA">Virtual Accounts ( BNI, MANDIRI, BRI, BCA, PERMATA, SAMPOERNA )</option>
+          <option value="EW">E - Wallet ( OVO, SHOPEEPAY, DANA, LINKAJA )</option>
         </select>
       </div>
       <div class="mb-3 order-message">

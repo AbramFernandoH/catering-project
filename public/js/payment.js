@@ -1,119 +1,89 @@
-// A reference to Stripe.js initialized with your real test publishable API key.
-var stripe = Stripe("pk_test_51IpM74FLnMuNCMrMcfLEBIZtzgFncmoO0H0L2INRBLR1zGl5PR0HCiNBoo9lksjH4tSi0hxBoO6seTlgIJA2oylx00ry1fAa3n");
+const paymentCard = document.querySelector('#payment-card');
+const paymentForm = document.querySelector('#form-payment-card');
+const submitBtn = document.querySelector('#pay-card');
+const cardNumber = document.querySelector('#card-number');
+const expMonth = document.querySelector('#exp-month');
+const expYear = document.querySelector('#exp-year');
+const cardCVN = document.querySelector('#card-cvn');
+const modal3DS = document.querySelector('#modal3DS');
+const iframe = document.querySelector('#iframe-card-payment');
 
-// The items the customer wants to buy
-var purchase = {
-  items: [{ id: "xl-tshirt" }]
-};
-
-// Disable the button until we have Stripe set up on the page
-document.querySelector("button").disabled = true;
-fetch("/create-payment-intent", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(purchase)
-})
-  .then(function(result) {
-    return result.json();
-  })
-  .then(function(data) {
-    var elements = stripe.elements();
-
-    var style = {
-      base: {
-        color: "#32325d",
-        fontFamily: 'Arial, sans-serif',
-        fontSmoothing: "antialiased",
-        fontSize: "16px",
-        "::placeholder": {
-          color: "#32325d"
-        }
-      },
-      invalid: {
-        fontFamily: 'Arial, sans-serif',
-        color: "#fa755a",
-        iconColor: "#fa755a"
-      }
-    };
-
-    var card = elements.create("card", { style: style });
-    // Stripe injects an iframe into the DOM
-    card.mount("#card-element");
-
-    card.on("change", function (event) {
-      // Disable the Pay button if there are no card details in the Element
-      document.querySelector("button").disabled = event.empty;
-      document.querySelector("#card-error").textContent = event.error ? event.error.message : "";
-    });
-
-    var form = document.getElementById("payment-form");
-    form.addEventListener("submit", function(event) {
-      event.preventDefault();
-      // Complete payment when the submit button is clicked
-      payWithCard(stripe, card, data.clientSecret);
-    });
-  });
-
-// Calls stripe.confirmCardPayment
-// If the card requires authentication Stripe shows a pop-up modal to
-// prompt the user to enter authentication details without leaving your page.
-var payWithCard = function(stripe, card, clientSecret) {
-  loading(true);
-  stripe
-    .confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: card
-      }
-    })
-    .then(function(result) {
-      if (result.error) {
-        // Show error to your customer
-        showError(result.error.message);
-      } else {
-        // The payment succeeded!
-        orderComplete(result.paymentIntent.id);
-      }
-    });
-};
-
-/* ------- UI helpers ------- */
-
-// Shows a success message when the payment is complete
-var orderComplete = function(paymentIntentId) {
-  loading(false);
-  document
-    .querySelector(".result-message a")
-    // .setAttribute(
-    //   "href",
-    //   "https://dashboard.stripe.com/test/payments/" + paymentIntentId
-    // )
-    ;
-  document.querySelector(".result-message").classList.remove("hidden");
-  document.querySelector("button").disabled = true;
-};
-
-// Show the customer the error from Stripe if their card fails to charge
-var showError = function(errorMsgText) {
-  loading(false);
-  var errorMsg = document.querySelector("#card-error");
-  errorMsg.textContent = errorMsgText;
-  setTimeout(function() {
-    errorMsg.textContent = "";
-  }, 4000);
-};
-
-// Show a spinner on payment submission
-var loading = function(isLoading) {
-  if (isLoading) {
-    // Disable the button and show a spinner
-    document.querySelector("button").disabled = true;
-    document.querySelector("#spinner").classList.remove("hidden");
-    document.querySelector("#button-text").classList.add("hidden");
-  } else {
-    document.querySelector("button").disabled = false;
-    document.querySelector("#spinner").classList.add("hidden");
-    document.querySelector("#button-text").classList.remove("hidden");
+async function xenditResponseHandler(err, cardToken){
+  if(err){
+    document.querySelector('#pay-card-error').value = err.message;
+    submitBtn.disabled = true;
+    return;
   }
-};
+
+  if(cardToken.status === 'VERIFIED'){
+
+    const token = cardToken.id;
+    const newEl = document.createElement('input');
+    newEl.setAttribute('type', 'hidden');
+    newEl.setAttribute('name', 'xenditToken');
+    newEl.setAttribute('value', token);
+    await document.querySelector('#form-payment-card .hidden-inputs').appendChild(newEl);
+    paymentForm.submit();
+
+  } else if(cardToken.status === 'IN_REVIEW'){
+    
+    const paymentCardStyle = 'overflow: hidden; padding-right: 0px';
+    paymentCard.setAttribute('class', 'modal-open');
+    paymentCard.setAttribute('style', paymentCardStyle);
+    paymentCard.setAttribute('data-bs-padding-right', '');
+    
+    const modalStyle = 'display: block;';
+    modal3DS.removeAttribute('aria-hidden');
+    modal3DS.setAttribute('class', 'modal fade show');
+    modal3DS.setAttribute('style', modalStyle);
+    modal3DS.setAttribute('aria-modal', 'true');
+    modal3DS.setAttribute('role', 'dialog');
+
+    iframe.setAttribute('src', cardToken.payer_authentication_url);
+    iframe.setAttribute('height', '450');
+    iframe.setAttribute('width', '500');
+
+  } else if(cardToken.status === 'FAILED'){
+    console.log(cardToken);
+
+    if(paymentCard.hasAttribute('data-bs-padding-right')){
+
+      paymentCard.removeAttribute('data-bs-padding-right');
+      paymentCard.removeAttribute('class');
+      paymentCard.removeAttribute('style');
+
+      modal3DS.setAttribute('class', 'modal fade');
+      modal3DS.setAttribute('aria-hidden', 'true');
+      modal3DS.removeAttribute('style');
+      modal3DS.removeAttribute('aria-modal');
+      modal3DS.removeAttribute('role');
+
+      iframe.removeAttribute('src');
+      iframe.removeAttribute('height');
+      iframe.removeAttribute('width');
+
+    }
+
+    document.querySelector('#pay-card-error').innerText = `${cardToken.failure_reason}, refresh the page if you want to using other card, or you can click cancel button for using other payment method`;
+    submitBtn.disabled = true;
+  }
+}
+
+paymentForm.addEventListener('submit', async(evt) => {
+  evt.preventDefault();
+  submitBtn.disabled = true;
+  const amount = document.createElement('input');
+  amount.setAttribute('type', 'hidden');
+  amount.setAttribute('name', 'amount');
+  amount.setAttribute('value', paymentForm.getAttribute('tp'));
+  await document.querySelector('#form-payment-card .hidden-inputs').appendChild(amount);
+  Xendit.card.createToken({
+    amount: amount.value,
+    card_number: cardNumber.value,
+    card_exp_month: expMonth.value,
+    card_exp_year: expYear.value,
+    card_cvn: cardCVN.value,
+    is_multiple_use: false,
+    should_authenticate: true
+  }, xenditResponseHandler);
+});

@@ -1,6 +1,19 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const paymentSchema = new Schema({
+  paymentMethod: {
+    type: String,
+    enum: ['COD', 'CARD', 'VA', 'EWALLET'],
+    required: true
+  },
+  chargeId: String,
+  paymentDate: {
+    type: Date,
+    required: true
+  }
+});
+
 const orderSchema = new Schema({
   quantity: {
     type: Number,
@@ -25,10 +38,7 @@ const orderSchema = new Schema({
     type: String,
     enum: ['Waiting for seller to accept the order', 'Order accepted by seller', 'Order rejected by seller', 'Done']
   },
-  paymentMethod: {
-    type: String,
-    enum: ['COD', 'Paypal']
-  }
+  payment: [paymentSchema]
 });
 
 module.exports = mongoose.model('Order', orderSchema);

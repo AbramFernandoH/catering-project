@@ -16,17 +16,48 @@ router.route('/')
   })
   .post( isLoggedIn, async (req, res) => {
     const currentUser = req.user._id;
-    const { cartId, menuId, quantity, message } = req.body;
-    const newOrder = new Order({ menu: menuId, quantity, message, owner: currentUser, totalPrices: quantity * 50000 });
-    const user = await User.findById(currentUser);
-    user.order.push(newOrder);
-    await user.save();
-    await newOrder.save();
-    const findIndex = orderCart.findIndex(cart => cart.id === cartId);
-    orderCart.splice(findIndex, 1);
+
+    const { cartId, menuId, quantity, message, paymentMethod } = req.body;
+    const findOrder = orderCart.findIndex(cart => cart.id === cartId);
+    const cart = orderCart[findOrder];
+
+    cart.quantity = quantity;
+    cart.message = message;
+    cart.totalPrices = quantity * 50000;
     req.session.cart = orderCart;
-    req.flash('success', 'Successfully make a new order');
-    res.redirect(`/myorders/${currentUser}`);
+    
+    switch (paymentMethod) {
+      case '.':
+        req.flash('error', 'Please select payment method');
+        res.redirect(`/cart/${cartId}`);
+        break;
+      
+      case 'CARD':
+        res.redirect(`/payment?method=card&cartId=${cartId}`);
+        break;
+
+      case 'VA':
+        res.redirect(`/payment?method=va&cartId=${cartId}`);
+        break;
+
+      case 'EW':
+        res.redirect(`/payment?method=ew&cartId=${cartId}`);
+        break;
+
+      default:
+        const newOrder = new Order({ menu: menuId, quantity, message, owner: currentUser, totalPrices: quantity * 50000, status: 'Waiting for seller to accept the order' });
+        newOrder.payment.push({ paymentMethod: 'COD', paymentDate: moment().format() });
+        const user = await User.findById(currentUser);
+        user.order.push(newOrder);
+        await user.save();
+        await newOrder.save();
+        const findIndex = orderCart.findIndex(cart => cart.id === cartId);
+        orderCart.splice(findIndex, 1);
+        req.session.cart = orderCart;
+        req.flash('success', 'Successfully make a new order');
+        res.redirect(`/myorders/${currentUser}`);
+        break;
+    }
   });
 
 router.route('/:orderId')
