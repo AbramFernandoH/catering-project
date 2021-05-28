@@ -44,7 +44,7 @@ router.route('/')
         res.redirect(`/payment?method=ew&cartId=${cartId}`);
         break;
 
-      default:
+      case 'COD':
         const newOrder = new Order({ menu: menuId, quantity, message, owner: currentUser, totalPrices: quantity * 50000, status: 'Waiting for seller to accept the order' });
         newOrder.payment.push({ paymentMethod: 'COD', paymentDate: moment().format() });
         const user = await User.findById(currentUser);

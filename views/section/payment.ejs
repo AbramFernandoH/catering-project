@@ -1,12 +1,35 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
   <section id="choose-payment-method">
-    <form action="/payment?pm=<%= method %>" method="post">
-      <% if(method === 'va'){ %>
-        <h3>Virtual Account</h3>
-      <% } else if(method === 'ew'){ %>
-        <h3>E - Wallet ( OVO / SHOPEEPAY / DANA / LINKAJA )</h3>
-      <% } %> 
+    <div class="mt-5 pt-5">
+
+
+    <form action="/payment?paymentMethod=<%= method %>&cartId=<%= cart.id %>" method="post">
+    <% if(method === 'va'){ %>
+        <h3>Virtual Accounts</h3>
+        <% for(let virtualAccount of virtualAccounts){ %>
+          <% if(virtualAccount.status === 'ACTIVE'){ %>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="virAcc" value="<%= virtualAccount.id %>" id="<%= virtualAccount.external_id %>">
+              <label class="form-check-label" for="<%= virtualAccount.external_id %>"><%= virtualAccount.bank_code %></label>
+            </div>
+            <p>Virtual Account Number: <%= virtualAccount.account_number %></p>
+          <% } %>
+        <% } %>
+        
+    <% } else if(method === 'ew'){ %>
+        <h3>E - Wallet</h3>
+        <% for(let pm of eWalletPMs){ %>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="eWallet" value="ID_<%= pm %>" id="<%= pm %>_ew">
+            <label class="form-check-label" for="<%= pm %>_ew"><%= pm %></label>
+          </div>
+        <% } %>
+    <% } %> 
+      <button class="btn btn-success">Submit</button>
     </form>
+
+
+    </div>
   </section>
 </main>
