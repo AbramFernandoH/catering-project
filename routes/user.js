@@ -241,6 +241,7 @@ router.route('/payment')
         const customer = new Customer({});
         const { eWallet } = req.body;
         const user = await User.findById(currentUser);
+        const findMenu = await Menu.findById(menu);
         const findCustomer = await customer.getCustomerByReferenceID({
           referenceID: user.customerId
         });
@@ -252,29 +253,39 @@ router.route('/payment')
             currency: 'IDR',
             amount: parseInt(totalPrices),
             checkoutMethod: 'ONE_TIME_PAYMENT',
-            channelCode: eWallet,
+            channelCode: 'ID_OVO',
+            customerID: user.customerId,
             channelProperties: {
               mobileNumber: findCustomer[0].mobile_number
-            }
+            },
+            basket: [
+              {
+                referenceID: findMenu.id,
+                name: findMenu.title,
+                category: 'Food',
+                currency: 'IDR',
+                price: 50000,
+                quantity,
+                type: 'PRODUCT'
+              }
+            ]
           });
           if(createEWCharge.status === 'PENDING'){
             req.session.ewId = createEWCharge.id;
             req.session.cartId = cartId;
-            return res.redirect('/payment/ovo-pending-payment');
+            const findeWallet = await ewallet.getEWalletChargeStatus({ chargeID: req.session.ewId });
+            const ewStatus = async () => {
+              return findeWallet
+            }
+            const checkEWCharge = setInterval(ewStatus, 1000);
+            if(checkEWCharge.status !== 'PENDING'){
+              clearInterval(checkEWCharge);
+              return res.redirect(`/myorders/${req.user._id}`);
+            }
+            // return res.redirect('/payment/ovo-pending-payment');
             // try{
             //   const findEWCharge = await ewallet.getEWalletChargeStatus({ chargeID: createEWCharge.id });
             // }catch(err){ console.log(err) }
-            // const newOrder = new Order({ menu, quantity, message, owner, totalPrices, status: 'Waiting for seller to accept the order' });
-            // newOrder.payment.push({ paymentMethod: 'EWALLET', paymentDate: createEWCharge.created, chargeId: createEWCharge.id });
-            // const user = await User.findById(currentUser);
-            // user.order.push(newOrder);
-            // await user.save();
-            // await newOrder.save();
-            // const findIndex = orderCart.findIndex(cart => cart.id === cartId);
-            // orderCart.splice(findIndex, 1);
-            // req.session.cart = orderCart;
-            // req.flash('success', 'Successfully make a new order');
-            // return res.redirect(`/myorders/${currentUser}`);
           }
           } catch(err){ console.log(err) }
         } else {
@@ -285,9 +296,21 @@ router.route('/payment')
             amount: parseInt(totalPrices),
             checkoutMethod: 'ONE_TIME_PAYMENT',
             channelCode: eWallet,
+            customerID: user.customerId,
             channelProperties: {
               successRedirectURL: `http://localhost:3000/myorders/${currentUser}`
-            }
+            },
+            basket: [
+              {
+                referenceID: findMenu.id,
+                name: findMenu.title,
+                category: 'Food',
+                currency: 'IDR',
+                price: 50000,
+                quantity,
+                type: 'PRODUCT'
+              }
+            ]
           });
           if(createEWCharge.channel_code === 'ID_SHOPEEPAY'){
             if(createEWCharge.status === 'PENDING'){
@@ -311,19 +334,18 @@ router.route('/payment')
   });
 
 router.get('/payment/ovo-pending-payment', isLoggedIn, async(req, res) => {
-  const findEW = await ewallet.getEWalletChargeStatus({ chargeID: req.session.ewId });
-  const ewStatus = async () => {
-    return findEW
-  }
-  const checkEWCharge = setInterval(ewStatus, 1000);
-  if(checkEWCharge.status === 'SUCCEEDED'){
-    clearInterval(checkEWCharge);
-    return res.redirect(`/myorders/${req.user._id}`);
-  } else if(checkEWCharge.status === 'FAILED' || 'VOIDED'){
-    clearInterval(checkEWCharge);
-    req.flash('error', `Payment ${checkEWCharge.status}`);
-    return res.redirect(`/myorders/${req.user._id}`);
-  }
+  // const findEW = await ewallet.getEWalletChargeStatus({ chargeID: req.session.ewId });
+  // const ewStatus = async () => {
+  //   return findEW
+  // }
+  // const checkEWCharge = setInterval(ewStatus, 1000);
+  // if(checkEWCharge.status === 'SUCCEEDED'){
+  //   clearInterval(checkEWCharge);
+  //   return res.redirect(`/myorders/${req.user._id}`);
+  // } else if(findEW.status === 'FAILED' || 'VOIDED'){
+  //   clearInterval(checkEWCharge);
+    
+  // }
   res.render('section/ovoPending', { headTitle: 'Waiting for ovo payment', findEW });
 });
 
@@ -341,13 +363,14 @@ router.get('/myorders/:userId', isLoggedIn, async (req, res) => {
   }
   const { ewId, cartId } = req.session;
   if(ewId && cartId){
+    const currenntUser = req.user._id;
     const findEW = await ewallet.getEWalletChargeStatus({ chargeID: ewId });
     if(findEW.status === 'SUCCEEDED'){
       const cart = orderCart.find(cart => cart.id === cartId);
       const { menu, quantity, message, totalPrices, owner } = cart;
       const newOrder = new Order({ menu, quantity, message, owner, totalPrices, status: 'Waiting for seller to accept the order' });
       newOrder.payment.push({ paymentMethod: 'EWALLET', paymentDate: findEW.created, chargeId: findEW.id });
-      const user = await User.findById(req.user._id);
+      const user = await User.findById(currenntUser);
       user.order.push(newOrder);
       await user.save();
       await newOrder.save();
@@ -357,7 +380,74 @@ router.get('/myorders/:userId', isLoggedIn, async (req, res) => {
       req.flash('success', 'Successfully make a new order');
       delete req.session.ewId;
       delete req.session.cartId;
-      return res.redirect(`/myorders/${req.user._id}`);
+      return res.redirect(`/myorders/${currenntUser}`);
+    }
+
+    if(findEW.status === 'FAILED'){
+      switch (findEW.failure_code) {
+        case 'ACCOUNT_ACCESS_BLOCKED':
+          req.flash('error', `Payment failed, ${findEW.failure_code}, your eWallet account has been restricted by eWallet provider`);
+          delete req.session.ewId;
+          delete req.session.cartId;
+          res.redirect(`/myorders/${currenntUser}`);
+          break;
+  
+        case 'INVALID_MERCHANT_CREDENTIALS':
+          req.flash('error', `Payment failed, ${findEW.failure_code}, Merchant credentials met with an error with the eWallet provider`);
+          delete req.session.ewId;
+          delete req.session.cartId;
+          res.redirect(`/myorders/${currenntUser}`);
+          break;
+  
+        case 'USER_DECLINED_PAYMENT':
+          req.flash('error', `Payment failed, ${findEW.failure_code}, you declined the payment request`);
+          delete req.session.ewId;
+          delete req.session.cartId;
+          res.redirect(`/myorders/${currenntUser}`);
+          break;
+  
+        case 'INVALID_ACCOUNT_DETAILS':
+          req.flash('error', `Payment failed, ${findEW.failure_code}, your account detail is invalid`);
+          delete req.session.ewId;
+          delete req.session.cartId;
+          res.redirect(`/myorders/${currenntUser}`);
+          break;
+  
+        case 'MAXIMUM_LIMIT_REACHED':
+          req.flash('error', `Payment failed, ${findEW.failure_code}, your eWallet account has reached maximum transaction limit`);
+          delete req.session.ewId;
+          delete req.session.cartId;
+          res.redirect(`/myorders/${currenntUser}`);
+          break;
+  
+        case 'USER_UNREACHABLE':
+          req.flash('error', `Payment failed, ${findEW.failure_code}, your device cannot be reached. Common reasons include unstable network, device error or jailbroken device.`);
+          delete req.session.ewId;
+          delete req.session.cartId;
+          res.redirect(`/myorders/${currenntUser}`);
+          break;
+  
+        case 'CHANNEL_UNAVAILABLE':
+          req.flash('error', `Payment failed, ${findEW.failure_code}, eWallet provider service is experiencing unexpected issues`);
+          delete req.session.ewId;
+          delete req.session.cartId;
+          res.redirect(`/myorders/${currenntUser}`);
+          break;
+  
+        case 'INSUFFICIENT_BALANCE':
+          req.flash('error', `Payment failed, ${findEW.failure_code}, your eWallet account balance is insufficient`);
+          delete req.session.ewId;
+          delete req.session.cartId;
+          res.redirect(`/myorders/${currenntUser}`);
+          break;
+  
+        case 'ACCOUNT_NOT_ACTIVATED':
+          req.flash('error', `Payment failed, ${findEW.failure_code}, your eWallet account has not been activated yet. Please activate first in eWallet provider app, before retry`);
+          delete req.session.ewId;
+          delete req.session.cartId;
+          res.redirect(`/myorders/${currenntUser}`);
+          break;
+      }
     }
   }
   res.render('section/myorders', { headTitle: 'My Orders', userOrders, dateValue, displayDate, displayDateDayMonth, dotTotalPrices });
