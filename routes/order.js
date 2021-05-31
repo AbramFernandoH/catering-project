@@ -1,4 +1,8 @@
 const express = require('express');
+const Xendit = require('xendit-node');
+const fetch = require('node-fetch');
+const moment = require('moment');
+const { v4: uuidv4 } = require('uuid');
 const router = express.Router();
 
 const Menu = require('../model/menu');
@@ -8,6 +12,11 @@ const Order = require('../model/order');
 const { isLoggedIn } = require('../middleware');
 const { displayDate, dateValue, dotTotalPrices } = require('../helperFunctions');
 let { orderCart } = require('./user');
+
+const xendit = new Xendit({ secretKey: process.env.XENDIT_SECRET_KEY });
+
+const { Card } = xendit;
+const card = new Card({});
 
 router.route('/')
   .get( isLoggedIn, async (req, res) => {
@@ -78,6 +87,24 @@ router.route('/:orderId')
   .delete( isLoggedIn, async (req, res) => {
     const userId = req.user._id;
     const { orderId } = req.params;
+    const findOrder = await Order.findById(orderId);
+    const payment = findOrder.payment[0];
+    if(payment.paymentMethod === 'CARD'){
+      const cardCharge = await card.getCharge({ chargeID: payment.chargeId });
+      const refundURL = `https://api.xendit.co/credit_card_charges/${payment.chargeId}/refunds`;
+      const refundHeaders = { 'Content-Type': 'application/json', 'Authorization': process.env.BASE64_FORMAT, 'X-IDEMPOTENCY-KEY': uuidv4(), 'x-api-version': '2019-05-01' };
+      const refundInfo = { amount: findOrder.totalPrices, external_id: cardCharge.external_id };
+      const makeRefund = await fetch(refundURL, {
+        method: 'POST',
+        headers: refundHeaders,
+        body: JSON.stringify(refundInfo)
+      });
+      const refundResult = await makeRefund.json();
+      if(refundResult.status === 'FAILED'){
+        req.flash('error', 'refund failed');
+        return res.redirect(`/myorders/${userId}`);
+      }
+    }
     await User.updateOne({_id: userId}, { $pull: { order: orderId } });
     await Order.deleteOne({_id: orderId});
     req.flash('success', 'Successfully cancel the order');
