@@ -2,20 +2,6 @@
 <main>
   <section id="choose-payment-method">
     <div class="mt-5 pt-5">
-
-
-    <form action="/payment?paymentMethod=<%= method %>&cartId=<%= cart.id %>" method="post">
-    <% if(method === 'va'){ %>
-        <h3>Virtual Accounts</h3>
-        <% for(let virtualAccount of virtualAccounts){ %>
-          <% if(virtualAccount.status === 'ACTIVE'){ %>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="virAcc" value="<%= virtualAccount.id %>" id="<%= virtualAccount.external_id %>">
-              <label class="form-check-label" for="<%= virtualAccount.external_id %>"><%= virtualAccount.bank_code %></label>
-            </div>
-            <p>Virtual Account Number: <%= virtualAccount.account_number %></p>
-          <% } %>
-        <% } %>
         
     <% } else if(method === 'ew'){ %>
         <h3>E - Wallet</h3>

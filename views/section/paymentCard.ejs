@@ -1,9 +1,8 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
   <section id="payment-card">
-    <div class="mt-5 pt-5">
-
     <%- include('../partials/flash') %>
+    <h1 class="text-center">Card Payment</h1>
     <form action="/payment?paymentMethod=<%= method %>&cartId=<%= cart.id %>" id="form-payment-card" method="post" tp="<%= cart.totalPrices %>">
       <div class="mb-3 card-number">
         <label for="card-number" class="form-label">Card Number</label>
@@ -24,7 +23,7 @@
       <div class="hidden-inputs">
       </div>
       <div class="mb-3 submit-card-btn">
-        <button class="btn btn-success" id="pay-card">Pay</button>
+        <button class="btn btn-lg pay-btn" id="pay-card">Pay</button>
       </div>
     </form>
 
@@ -39,7 +38,5 @@
         </div>
       </div>
     </div>
-
-  </div>
   </section>
 </main>

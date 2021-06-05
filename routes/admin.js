@@ -93,7 +93,11 @@ router.get('/orders/:menuId', isLoggedIn, isAdmin, async (req, res) => {
   const findMenu = await Menu.findOne({_id: menuId});
   const menuTitle = findMenu.title;
   const menuDate = findMenu.date;
-  res.render('admin/orders', { headTitle: `Orders for ${menuTitle}`, allOrders, displayDate, displayDay, menuTitle, menuDate });
+  const waitingOrders = await Order.find({ menu: menuId, status: 'Waiting for seller to accept the order' }).populate('menu').populate('owner');
+  const acceptedOrders = await Order.find({ menu: menuId, status: 'Order accepted by seller' }).populate('menu').populate('owner');
+  const rejectedOrders = await Order.find({ menu: menuId, status: 'Order rejected by seller' }).populate('menu').populate('owner');
+  const doneOrders = await Order.find({ menu: menuId, status: 'Order done' }).populate('menu').populate('owner');
+  res.render('admin/orders', { headTitle: `Orders for ${menuTitle}`, allOrders, displayDate, displayDay, menuTitle, menuDate, waitingOrders, acceptedOrders, rejectedOrders, doneOrders });
 });
 
 module.exports = router;

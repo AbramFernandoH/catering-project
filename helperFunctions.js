@@ -1,13 +1,4 @@
 const moment = require('moment');
-// const Xendit = require('xendit-node');
-// const fetch = require('node-fetch');
-
-// const User = require('../model/user');
-
-// const xendit = new Xendit({ secretKey: process.env.XENDIT_SECRET_KEY });
-
-// const { VirtualAcc } = xendit;
-// const virtualAccount = new VirtualAcc({});
 
 const calendarFormat = date => {
   const year = date.pop();
@@ -65,13 +56,5 @@ const surname = name => {
   if(name.lastName){ return name.lastName }
   return null;
 };
-
-// const findVaBNI = async(user) => {
-//   const findUser = await User.findById(user);
-//   const virtualAccountIds = [];
-//   for(let va of findUser.virtualAccounts){
-
-//   }
-// }
 
 module.exports = { calendarFormat, minDate, maxDate, menuDate, displayDate, dateValue, displayDay, dotTotalPrices, middleName, surname }

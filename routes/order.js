@@ -9,7 +9,7 @@ const Menu = require('../model/menu');
 const User = require('../model/user');
 const Order = require('../model/order');
 
-const { isLoggedIn } = require('../middleware');
+const { isLoggedIn, isAdmin } = require('../middleware');
 const { displayDate, dateValue, dotTotalPrices } = require('../helperFunctions');
 let { orderCart } = require('./user');
 
@@ -45,10 +45,6 @@ router.route('/')
         res.redirect(`/payment?method=card&cartId=${cartId}`);
         break;
 
-      case 'VA':
-        res.redirect(`/payment?method=va&cartId=${cartId}`);
-        break;
-
       case 'EW':
         res.redirect(`/payment?method=ew&cartId=${cartId}`);
         break;
@@ -67,6 +63,13 @@ router.route('/')
         res.redirect(`/myorders/${currentUser}`);
         break;
     }
+  })
+  .patch( isLoggedIn, isAdmin, async (req, res) => {
+    const { id } = req.query;
+    const { status } = req.body;
+    const findOrder = await Order.findById(id).populate('menu');
+    await Order.updateOne({_id: id}, { status });
+    res.redirect(`/admin/orders/${findOrder.menu._id}`);
   });
 
 router.route('/:orderId')
@@ -93,7 +96,7 @@ router.route('/:orderId')
       const cardCharge = await card.getCharge({ chargeID: payment.chargeId });
       const refundURL = `https://api.xendit.co/credit_card_charges/${payment.chargeId}/refunds`;
       const refundHeaders = { 'Content-Type': 'application/json', 'Authorization': process.env.BASE64_FORMAT, 'X-IDEMPOTENCY-KEY': uuidv4(), 'x-api-version': '2019-05-01' };
-      const refundInfo = { amount: findOrder.totalPrices, external_id: cardCharge.external_id };
+      const refundInfo = { amount: `${findOrder.totalPrices - 10000}`, external_id: cardCharge.external_id };
       const makeRefund = await fetch(refundURL, {
         method: 'POST',
         headers: refundHeaders,

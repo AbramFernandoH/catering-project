@@ -265,11 +265,13 @@ i.fa-chevron-left, i.fa-chevron-right{
 
 #order-menu h1{
   font-weight: 700;
+  font-size: 2.2rem;
 }
 
 #order-menu .form-menu{
   display: grid;
   grid-template-rows: repeat(5, auto);
+  margin-top: 10%;
 }
 
 #order-menu .mb-3 .form-label{
@@ -367,7 +369,7 @@ footer{
 
 .register-form{
   display: grid;
-  grid-template-rows: repeat(5, auto);
+  grid-template-rows: repeat(11, auto);
 }
 
 /* Register end */
@@ -548,165 +550,36 @@ footer{
 
 /* order-cart end */
 
-/* confirm-payment start */
+/* payment-card start */
 
-/* #confirm-payment{
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  display: flex;
+#payment-card{
+  padding: 20% 10% 0;
+  min-height: 100vh;
+}
+
+#payment-card h1{
+  font-weight: 700;
+}
+
+#form-payment-card{
+  margin-top: 8%;
+  display: grid;
+}
+
+.submit-card-btn{
+  margin-top: 8%;
+  display: grid;
   justify-content: center;
-  align-content: center;
-  height: 100vh;
-  width: 100vw;
-  box-sizing: border-box;
 }
 
-#payment-form{
-  width: 30vw;
-  min-width: 500px;
-  align-self: center;
-  box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
-    0px 2px 5px 0px rgba(50, 50, 93, 0.1), 0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
-  border-radius: 7px;
-  padding: 40px;
+.submit-card-btn .pay-btn{
+  background-color: rgba(179, 45, 112, 1);
+  color: white;
 }
 
-#payment-form input{
-  border-radius: 6px;
-  margin-bottom: 6px;
-  padding: 12px;
-  border: 1px solid rgba(50, 50, 93, 0.1);
-  height: 44px;
-  font-size: 16px;
-  width: 100%;
-  background: white;
-}
-
-#payment-form .result-message{
-  line-height: 22px;
-  font-size: 16px;
-}
-
-#payment-form .result-message a{
-  color: rgb(89, 111, 214);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-#confirm-payment .hidden{
-  display: none;
-}
-
-#payment-form #card-error{
-  color: rgb(105, 115, 134);
-  text-align: left;
-  font-size: 13px;
-  line-height: 17px;
-  margin-top: 12px;
-}
-
-#payment-form #card-element {
-  border-radius: 4px 4px 0 0 ;
-  padding: 12px;
-  border: 1px solid rgba(50, 50, 93, 0.1);
-  height: 44px;
-  width: 100%;
-  background: white;
-}
-
-#payment-form #payment-request-button {
-  margin-bottom: 32px;
-}
-
-/* Buttons and links */
-/* #confirm-payment button {
-  background: #5469d4;
-  color: #ffffff;
-  font-family: Arial, sans-serif;
-  border-radius: 0 0 4px 4px;
-  border: 0;
-  padding: 12px 16px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: block;
-  transition: all 0.2s ease;
-  box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
-  width: 100%;
-}
-#confirm-payment button:hover {
-  filter: contrast(115%);
-}
-#confirm-payment button:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-/* spinner/processing state, errors */
-/* #confirm-payment .spinner,
-#confirm-payment .spinner:before,
-#confirm-payment .spinner:after {
-  border-radius: 50%;
-}
-#confirm-payment .spinner {
-  color: #ffffff;
-  font-size: 22px;
-  text-indent: -99999px;
-  margin: 0px auto;
-  position: relative;
-  width: 20px;
-  height: 20px;
-  box-shadow: inset 0 0 0 2px;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
-}
-#confirm-payment .spinner:before,
-#confirm-payment .spinner:after {
-  position: absolute;
-  content: "";
-}
-#confirm-payment .spinner:before {
-  width: 10.4px;
-  height: 20.4px;
-  background: #5469d4;
-  border-radius: 20.4px 0 0 20.4px;
-  top: -0.2px;
-  left: -0.2px;
-  -webkit-transform-origin: 10.4px 10.2px;
-  transform-origin: 10.4px 10.2px;
-  -webkit-animation: loading 2s infinite ease 1.5s;
-  animation: loading 2s infinite ease 1.5s;
-}
-#confirm-payment .spinner:after {
-  width: 10.4px;
-  height: 10.2px;
-  background: #5469d4;
-  border-radius: 0 10.2px 10.2px 0;
-  top: -0.1px;
-  left: 10.2px;
-  -webkit-transform-origin: 0px 10.2px;
-  transform-origin: 0px 10.2px;
-  -webkit-animation: loading 2s infinite ease;
-  animation: loading 2s infinite ease;
-} */
-
-/* confirm-payment end */
+/* payment-card end */
 
 /* Media Queries */
-
-@media screen and (max-width: 600px) {
-  /* header .heading{
-    top: 0;
-    left: 0;
-    padding: 40% 10%;
-    text-align: center;
-    width: 100%;
-  } */
-  /* #payment-form{
-    width: 80vw;
-  } */
-}
 
 @media screen and (min-width: 590px) {
   /* header .heading{
@@ -732,6 +605,10 @@ footer{
 
   #order-menu{
     margin-top: 13%;
+  }
+
+  #order-cart{
+    padding-top: 15%;
   }
 }
 
@@ -800,6 +677,18 @@ footer{
   #order-menu{
     margin-top: 10%;
   }
+
+  #order-menu .form-menu{
+    margin-top: 7%;
+  }
+
+  #payment-card{
+    padding-top: 15%;
+  }
+
+  .submit-card-btn{
+    margin-top: 5%;
+  }
 }
 
 @media screen and (min-width: 770px) {
@@ -833,6 +722,10 @@ footer{
   #contact-us .address{
     /* grid-area: address; */
     grid-column: 7 / -1;
+  }
+
+  #order-cart{
+    padding-top: 12%;
   }
 }
 
@@ -987,6 +880,16 @@ footer{
     column-gap: 1rem;
   }
 
+  .checkout-menu{
+    display: grid;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .checkout-menu .form-label{
+    font-size: 2.5rem;
+  }
+
   .menu{
     grid-column: 1 / 7;
   }
@@ -995,7 +898,15 @@ footer{
     grid-column: 7 / -1;
   }
 
-  .order-message, .total-price, .submit-order{
+  .checkout-quantity{
+    grid-column: 1 / 7;
+  }
+
+  .payment-method{
+    grid-column: 7 / -1;
+  }
+
+  .checkout-menu, .order-message, .total-price, .submit-order{
     grid-column: 1 / -1;
   }
 
@@ -1061,15 +972,15 @@ footer{
     column-gap: 1rem;
   }
 
-  .register-username{
+  .register-fullname, .register-email, .register-password, .register-city{
     grid-column: 1 / 7;
   }
 
-  .register-email{
+  .register-username, .register-mobile-number, .register-confirm-password, .register-postalCode{
     grid-column: 7 / -1;
   }
 
-  .register-password, .register-address, .register-btn{
+  .register-province, .register-streetLine1,  .register-streetLine2, .register-btn{
     grid-column: 1 / -1;
   }
 
@@ -1095,6 +1006,10 @@ footer{
 
   .menu-admin .title{
     grid-column: 1 / 7;
+  }
+
+  .menu-admin .date{
+    grid-column: 7 / -1;
   }
 
   .menu-admin .day{
@@ -1125,6 +1040,33 @@ footer{
 
   #my-orders .card .btn{
     padding: 3% 6%;
+  }
+
+  #order-cart{
+    padding-top: 8%;
+  }
+
+  #payment-card{
+    padding-top: 10%;
+  }
+
+  #form-payment-card{
+    margin-top: 4%;
+    grid-template: repeat(3, auto) / repeat(12, 1fr);
+    column-gap: 2%;
+  }
+
+  .card-number, .exp-year{
+    grid-column: 1 / 7;
+  }
+
+  .exp-month, .card-cvn{
+    grid-column: 7 / -1;
+  }
+
+  .submit-card-btn{
+    margin-top: 2%;
+    grid-column: 1 / -1;
   }
 }
 
@@ -1166,5 +1108,9 @@ footer{
 
   #my-orders .all-orders h3{
     font-size: 1.9rem;
+  }
+
+  #order-cart{
+    padding-top: 6%;
   }
 }

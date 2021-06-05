@@ -36,7 +36,7 @@ const orderSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ['Waiting for seller to accept the order', 'Order accepted by seller', 'Order rejected by seller', 'Done']
+    enum: ['Waiting for seller to accept the order', 'Order accepted by seller', 'Order rejected by seller', 'Order done']
   },
   payment: [paymentSchema]
 });

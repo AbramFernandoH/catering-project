@@ -2,17 +2,6 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const passportLocalMongoose = require('passport-local-mongoose');
 
-const vaSchema = new Schema({
-  vaId: {
-    type: String,
-    required: true
-  },
-  bankCode: {
-    type: String,
-    required: true
-  }
-}, { _id: false });
-
 const UserSchema = new Schema({
   email: {
     type: String,
@@ -45,8 +34,7 @@ const UserSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Order'
   }],
-  customerId: String,
-  virtualAccounts: [vaSchema]
+  customerId: String
 });
 
 UserSchema.methods.isAnAdmin = async function(){

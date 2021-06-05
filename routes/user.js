@@ -18,11 +18,11 @@ const upload = multer({ storage });
 
 const xendit = new Xendit({ secretKey: process.env.XENDIT_SECRET_KEY });
 
-const { VirtualAcc } = xendit;
-const virtualAccount = new VirtualAcc({});
-
 const { EWallet } = xendit;
 const ewallet = new EWallet({});
+
+const { Customer } = xendit;
+const customer = new Customer({});
 
 const orderCart = [];
 
@@ -40,9 +40,7 @@ router.route('/register')
     res.render('section/register', { headTitle: 'Register' });
   })
   .post( async (req, res) => {
-    const { Customer } = xendit;
-    const customer = new Customer({});
-    const { fullname, username, email, password, addresses, mobileNumber } = req.body;
+    const { fullname, username, email, password, confirmPassword, addresses, mobileNumber } = req.body;
     const splitName = fullname.split(' ');
     let name = {};
     if(splitName.length > 2){
@@ -52,37 +50,24 @@ router.route('/register')
     } else {
       name = { firstName: splitName[0] };
     }
-    
-    const newCustomer = await customer.createCustomer({
-      referenceID: `customer_${uuidv4()}`,
-      givenNames: name.firstName,
-      email,
-      mobileNumber,
-      middleName: middleName(name),
-      surname:  surname(name),
-      addresses: [{ country: 'ID', ...addresses }]
-    });
 
-    const user = new User({ username, email, addresses, customerId: newCustomer.reference_id });
-
-    const bank_code = ['BNI', 'BRI', 'MANDIRI', 'PERMATA', 'BCA', 'SAHABAT_SAMPOERNA'];
-    for(let bank of bank_code){
-      try{
-      const newFixedVA = await virtualAccount.createFixedVA({
-        externalID: `va_${uuidv4()}`,
-        bankCode: bank,
-        name: fullname,
-        isClosed: true,
-        expectedAmt: 10000
+    if(password === confirmPassword){
+      const newCustomer = await customer.createCustomer({
+        referenceID: `customer_${uuidv4()}`,
+        givenNames: name.firstName,
+        email,
+        mobileNumber,
+        middleName: middleName(name),
+        surname:  surname(name),
+        addresses: [{ country: 'ID', ...addresses }]
       });
-      await user.virtualAccounts.push({ vaId: newFixedVA.id, bankCode: bank });
-      } catch(err){ console.log(err) }
+      const user = new User({ username, email, addresses, customerId: newCustomer.reference_id });
+      const newUser = await User.register(user, password);
+      return req.login(newUser, () => res.redirect('/') );
     }
 
-    const newUser = await User.register(user, password);
-    req.login(newUser, () => {
-      res.redirect('/');
-    });
+    req.flash('error', 'Your password and confirm password not match');
+    res.redirect('/register');
   });
 
 router.route('/login')
@@ -101,7 +86,7 @@ router.get('/logout', (req, res) => {
 router.route('/cart')
   .get( isLoggedIn, async (req, res) => {
     const carts = req.session.cart;
-    res.render('section/cart', { headTitle: 'Cart', carts });
+    res.render('section/cart', { headTitle: 'Cart', carts, dotTotalPrices });
   })
   .post( isLoggedIn, async (req, res) => {
     const currentUser = req.user._id;
@@ -145,12 +130,23 @@ router.route('/payment')
     const { menu, quantity, message, totalPrices, owner } = cart;
     switch (paymentMethod) {
       case 'card':
-        const { amount, xenditToken } = req.body;
+        const findUser = await User.findById(currentUser);
+        const searchCustomer = await customer.getCustomerByReferenceID({
+          referenceID: findUser.customerId
+        });
+        const { given_names, surname, middle_name, addresses } = searchCustomer;
+        const { amount, xenditToken, card_cvn } = req.body;
         try{
+        const billingDetails = {
+          given_names,
+          surname,
+          middle_name,
+          address: addresses
+        }
         const fetchh = await fetch('https://api.xendit.co/credit_card_charges', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': process.env.BASE64_FORMAT },
-          body: JSON.stringify({ external_id: `card_charges_${uuidv4()}`, token_id: xenditToken, amount })
+          body: JSON.stringify({ external_id: `card_charges_${uuidv4()}`, token_id: xenditToken, amount, card_cvn, currency: 'IDR', billing_details: billingDetails })
         });
         const result = await fetchh.json();
         
@@ -221,24 +217,8 @@ router.route('/payment')
           console.log(err);
         }
         break;
-
-      case 'va':
-        // const { virAcc } = req.body;
-        // await virtualAccount.updateFixedVA({
-        //   id: virAcc,
-        //   expectedAmt: parseInt(totalPrices)
-        // });
-        // try {
-        //   const findVA = await virtualAccount.getFixedVA({ id: virAcc });
-          
-        // } catch (err) {
-        //   console.log(err);
-        // }
-        break;
     
       case 'ew':
-        const { Customer } = xendit;
-        const customer = new Customer({});
         const { eWallet } = req.body;
         const user = await User.findById(currentUser);
         const findMenu = await Menu.findById(menu);
@@ -352,7 +332,8 @@ router.get('/payment/ovo-pending-payment', isLoggedIn, async(req, res) => {
 router.get('/cart/:id', isLoggedIn, async(req, res) => {
   const { id } = req.params;
   const cart = orderCart.find(order => order.id === id);
-  res.render('section/checkout', { headTitle: 'Order Checkout', cart, dotTotalPrices });
+  const menu = await Menu.findById(cart.menu);
+  res.render('section/checkout', { headTitle: 'Order Checkout', cart, menu, dotTotalPrices });
 });
 
 router.get('/myorders/:userId', isLoggedIn, async (req, res) => {

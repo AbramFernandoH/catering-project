@@ -3,28 +3,109 @@
   <section id="admin-home-orders">
     <h1 class="text-center">Orders for <%= menuTitle %> on <%= displayDate(menuDate) %></h1>
     <div class="row">
-      <% if(allOrders){ %> 
-      <% for(let order of allOrders){ %>
-        <div class="col-md-6">
-          <div class="order">
-            <h3 class="text-center">By <%= order.owner.username %></h3>
-            <div class="card">
-              <div class="card-body">
-                <p class="card-text">Number of orders: <%= order.quantity %></p>
-                <p class="card-text">Address: <%= order.owner.address %></p>
-                <% if(order.message === ''){ %>
-                  <p class="text-muted">Message: none</p>
-                <% } else { %>
-                  <p class="card-text">Message: <%= order.message %></p>
-                <% } %>   
-                <a href="#" class="btn btn-success text-white">Accept</a>
-                <a href="#" class="btn btn-danger text-white">Reject</a>
+      <h3 class="mt-5 text-center">Waiting for seller to accept the order</h3>
+      <% if(waitingOrders){ %> 
+        <% for(let order of waitingOrders){ %>
+          <div class="col-md-6">
+            <div class="order">
+              <h3 class="text-center">By <%= order.owner.username %></h3>
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-text">Number of orders: <%= order.quantity %></p>
+                  <p class="card-text">Address: <%= order.owner.addresses.streetLine1 %>, <%= order.owner.addresses.streetLine2 %></p>
+                  <% if(order.message === ''){ %>
+                    <p class="text-muted">Message: none</p>
+                  <% } else { %>
+                    <p class="card-text">Message: <%= order.message %></p>
+                  <% } %>  
+                  <form action="/order?_method=PATCH&id=<%= order._id %>" method="post">
+                    <input type="hidden" name="status" value="Order accepted by seller">
+                    <div class="mb-3 order-accepted">
+                      <button class="btn btn-success text-white">Accept</button>
+                    </div>
+                  </form>
+                  <form action="/order?_method=PATCH&id=<%= order._id %>" method="post">
+                    <input type="hidden" name="status" value="Order rejected by seller">
+                    <div class="mb-3 order-rejected">
+                      <button class="btn btn-danger text-white">Reject</button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      <% } %>
+        <% } %>
       <% } %> 
+    </div>
+    <div class="row">
+      <h3 class="mt-5 text-center">Accepted Orders</h3>
+      <% if(acceptedOrders){ %> 
+        <% for(let order of acceptedOrders){ %>
+          <div class="col-md-6">
+            <div class="order">
+              <h3 class="text-center">By <%= order.owner.username %></h3>
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-text">Number of orders: <%= order.quantity %></p>
+                  <p class="card-text">Address: <%= order.owner.addresses.streetLine1 %>, <%= order.owner.addresses.streetLine2 %></p>
+                  <% if(order.message === ''){ %>
+                    <p class="text-muted">Message: none</p>
+                  <% } else { %>
+                    <p class="card-text">Message: <%= order.message %></p>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      <% } %>
+    </div>
+    <div class="row">
+      <h3 class="mt-5 text-center">Rejected Orders</h3>
+      <% if(rejectedOrders){ %> 
+        <% for(let order of rejectedOrders){ %>
+          <div class="col-md-6">
+            <div class="order">
+              <h3 class="text-center">By <%= order.owner.username %></h3>
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-text">Number of orders: <%= order.quantity %></p>
+                  <p class="card-text">Address: <%= order.owner.addresses.streetLine1 %>, <%= order.owner.addresses.streetLine2 %></p>
+                  <% if(order.message === ''){ %>
+                    <p class="text-muted">Message: none</p>
+                  <% } else { %>
+                    <p class="card-text">Message: <%= order.message %></p>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      
+      <% } %>
+    </div>
+    <div class="row">
+      <h3 class="mt-5 text-center">Done Orders</h3>
+      <% if(doneOrders){ %> 
+        <% for(let order of doneOrders){ %>
+          <div class="col-md-6">
+            <div class="order">
+              <h3 class="text-center">By <%= order.owner.username %></h3>
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-text">Number of orders: <%= order.quantity %></p>
+                  <p class="card-text">Address: <%= order.owner.addresses.streetLine1 %>, <%= order.owner.addresses.streetLine2 %></p>
+                  <% if(order.message === ''){ %>
+                    <p class="text-muted">Message: none</p>
+                  <% } else { %>
+                    <p class="card-text">Message: <%= order.message %></p>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      <% } %>
     </div>
   </section>
 </main>
