@@ -4,29 +4,33 @@
     <%- include('../partials/flash') %>
     <h1 class="text-center">My Orders</h1>
     <div class="all-orders">
-      <% for(let userOrder of userOrders.order){ %> 
-      <div class="order">
-        <h3><%= displayDateDayMonth(userOrder.menu.date) %></h3>
-        <div class="card">
-          <img src="<%= userOrder.menu.images[0].displayImg %>" class="card-img-top" alt="">
-          <div class="card-body">
-            <h5 class="card-title"><%= userOrder.menu.title %></h5>
-            <p class="card-text">Quantity: <%= userOrder.quantity %></p>
-            <% if(userOrder.message === ''){ %>
-              <p class="text-muted">Message: -</p>
-            <% } else { %>
-                <p class="text-muted">Message: <%= userOrder.message %></p>
-            <% } %>   
-            <p class="card-text">Total Price: Rp <%= dotTotalPrices(userOrder.totalPrices) %>,00</p>
-            <p class="card-text">Order Status: <%= userOrder.status %></p>
-            <a href="/order/<%= userOrder._id %>" class="btn btn-edit">Edit</a>
-            <form action="/order/<%= userOrder._id %>?_method=DELETE" method="post">
-              <button class="btn btn-cancel text-white">Cancel</button>
-            </form>
+      <% if(authUser._id && userOrders._id){ %>
+        <% for(let userOrder of userOrders.order){ %> 
+          <div class="order">
+            <h3><%= displayDateDayMonth(userOrder.menu.date) %></h3>
+            <div class="card">
+              <img src="<%= userOrder.menu.images[0].displayImg %>" class="card-img-top" alt="">
+              <div class="card-body">
+                <h5 class="card-title"><%= userOrder.menu.title %></h5>
+                <p class="card-text">Quantity: <%= userOrder.quantity %></p>
+                <% if(userOrder.message === ''){ %>
+                  <p class="text-muted">Message: -</p>
+                <% } else { %>
+                    <p class="text-muted">Message: <%= userOrder.message %></p>
+                <% } %>   
+                <p class="card-text">Total Price: Rp <%= dotTotalPrices(userOrder.totalPrices) %>,00</p>
+                <p class="card-text">Order Status: <%= userOrder.status %></p>
+                <p class="card-text">Payment Method: <%= userOrder.payment[0].paymentMethod %></p>
+                <% if(userOrder.status === 'Waiting for seller to accept the order'){ %> 
+                  <form action="/order/<%= userOrder._id %>?_method=DELETE" method="post">
+                    <button class="btn btn-cancel text-white">Cancel</button>
+                  </form>
+                <% } %> 
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <% } %> 
+        <% } %>
+      <% } %>
     </div>
   </section>
 </main>

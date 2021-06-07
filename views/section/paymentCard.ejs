@@ -3,6 +3,7 @@
   <section id="payment-card">
     <%- include('../partials/flash') %>
     <h1 class="text-center">Card Payment</h1>
+    <h4 class="text-center mt-3">Amount: Rp <%= dotTotalPrices(cart.totalPrices) %>,00</h4>
     <form action="/payment?paymentMethod=<%= method %>&cartId=<%= cart.id %>" id="form-payment-card" method="post" tp="<%= cart.totalPrices %>">
       <div class="mb-3 card-number">
         <label for="card-number" class="form-label">Card Number</label>
@@ -39,4 +40,6 @@
       </div>
     </div>
   </section>
+
+  <%- include('../partials/cantGoBack') %> 
 </main>

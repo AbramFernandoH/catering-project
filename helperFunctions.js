@@ -33,6 +33,8 @@ const dateValue = date => {
 
 const displayDay = date => moment(date).format('dddd');
 
+const displayDateAndTime = date => moment(date).format('MMMM Do YYYY, h:mm:ss a');
+
 const dotTotalPrices = val => {
   const value = val.toString();
   const totalPrices = [...value];
@@ -57,4 +59,4 @@ const surname = name => {
   return null;
 };
 
-module.exports = { calendarFormat, minDate, maxDate, menuDate, displayDate, dateValue, displayDay, dotTotalPrices, middleName, surname }
+module.exports = { calendarFormat, minDate, maxDate, menuDate, displayDate, dateValue, displayDay, dotTotalPrices, middleName, surname, displayDateAndTime }

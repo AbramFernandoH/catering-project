@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const paymentSchema = new Schema({
   paymentMethod: {
     type: String,
-    enum: ['COD', 'CARD', 'VA', 'EWALLET'],
+    enum: ['COD', 'CARD', 'EWALLET'],
     required: true
   },
   chargeId: String,

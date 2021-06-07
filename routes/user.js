@@ -32,6 +32,7 @@ router.get('/', async (req, res) => {
   //   const dates = m.map(menu => (moment(menu.date).toString()).split(' ') );
   //   return dates.map( d => ({ day: d[0], month: d[1], date: d[2], year: d[3] }) );
   // };
+  delete req.session.path;
   res.render('home', { headTitle: 'Home', menus, displayDate, displayDay });
 });
 
@@ -111,17 +112,10 @@ router.route('/payment')
     const { method, cartId } = req.query;
     const cart = orderCart.find(cart => cart.id === cartId);
     if(method === 'card'){
-      return res.render('section/paymentCard', { headTitle: `${method} Payment`, method, cart });
-    }
-    const currentUser = req.user._id;
-    const user = await User.findById(currentUser);
-    const virtualAccounts = [];
-    for(let va of user.virtualAccounts){
-      const virAcc = await virtualAccount.getFixedVA({ id: va.vaId });
-      virtualAccounts.push(virAcc);
+      return res.render('section/paymentCard', { headTitle: 'Card Payment', method, cart, dotTotalPrices });
     }
     const eWalletPMs = ['OVO', 'SHOPEEPAY', 'DANA', 'LINKAJA'];
-    res.render('section/payment', { headTitle: `${method} Payment`, method, cart, virtualAccounts, eWalletPMs });
+    res.render('section/payment', { headTitle: 'E-Wallet Payment', method, cart, eWalletPMs });
   })
   .post(isLoggedIn, async (req, res) => {
     const currentUser = req.user._id;
@@ -237,18 +231,7 @@ router.route('/payment')
             customerID: user.customerId,
             channelProperties: {
               mobileNumber: findCustomer[0].mobile_number
-            },
-            basket: [
-              {
-                referenceID: findMenu.id,
-                name: findMenu.title,
-                category: 'Food',
-                currency: 'IDR',
-                price: 50000,
-                quantity,
-                type: 'PRODUCT'
-              }
-            ]
+            }
           });
           if(createEWCharge.status === 'PENDING'){
             req.session.ewId = createEWCharge.id;

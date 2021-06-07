@@ -1,6 +1,7 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
   <section id="admin-home-orders">
+    <%- include('../partials/flash') %>
     <h1 class="text-center">Orders for <%= menuTitle %> on <%= displayDate(menuDate) %></h1>
     <div class="row">
       <h3 class="mt-5 text-center">Waiting for seller to accept the order</h3>
@@ -13,6 +14,11 @@
                 <div class="card-body">
                   <p class="card-text">Number of orders: <%= order.quantity %></p>
                   <p class="card-text">Address: <%= order.owner.addresses.streetLine1 %>, <%= order.owner.addresses.streetLine2 %></p>
+                  <p class="card-text">Payment Method: <%= order.payment[0].paymentMethod %></p>
+                  <% if(order.payment[0].paymentMethod === 'CARD' || 'EWALLET'){ %>
+                    <p class="card-text">ChargeId: <a href="/admin/paymentProof?orderId=<%= order._id %>&chargeId=<%= order.payment[0].chargeId %>&paymentMethod=<%= order.payment[0].paymentMethod %>"><%= order.payment[0].chargeId %></a></p>
+                    <p class="cart-text">Payment Time: <%= order.payment[0].paymentDate %></p>
+                  <% } %>
                   <% if(order.message === ''){ %>
                     <p class="text-muted">Message: none</p>
                   <% } else { %>
@@ -53,6 +59,12 @@
                   <% } else { %>
                     <p class="card-text">Message: <%= order.message %></p>
                   <% } %>
+                  <form action="/order?_method=PATCH&id=<%= order._id %>" method="post">
+                    <input type="hidden" name="status" value="Order done">
+                    <div class="mb-3 order-accepted">
+                      <button class="btn btn-success text-white">Done</button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>

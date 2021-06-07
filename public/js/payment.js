@@ -27,7 +27,7 @@ async function xenditResponseHandler(err, cardToken){
 
   } else if(cardToken.status === 'IN_REVIEW'){
     
-    const paymentCardStyle = 'overflow: hidden; padding-right: 0px';
+    const paymentCardStyle = 'overflow: hidden; padding-right: 17px';
     paymentCard.setAttribute('class', 'modal-open');
     paymentCard.setAttribute('style', paymentCardStyle);
     paymentCard.setAttribute('data-bs-padding-right', '');

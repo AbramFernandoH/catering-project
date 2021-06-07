@@ -1,0 +1,28 @@
+<%- layout('boilerplate/boilerplate') -%>
+<main>
+  <section id="admin-payment-proof">
+    <h1>Payment Proof for order <%= findOrder._id %></h1>
+    <% if(findOrder.payment[0].paymentMethod === 'CARD'){ %> 
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Created on <%= displayDateAndTime(paymentProof.created) %></h5>
+          <p class="card-text">Status: <%= paymentProof.status %></p>
+          <p class="card-text">Card Type: <%= paymentProof.card_type %></p>
+          <p class="card-text">Card Number: <%= paymentProof.masked_card_number %></p>
+          <p class="card-text">Card Brand: <%= paymentProof.card_brand %></p>
+          <p class="card-text">Authorized Amount: Rp <%= dotTotalPrices(paymentProof.authorized_amount) %>,00</p>
+          <p class="card-text">Capture Amount: Rp <%= dotTotalPrices(paymentProof.capture_amount) %>,00</p>
+        </div>
+      </div>
+    <% } else if(findOrder.payment[0].paymentMethod === 'EWALLET'){ %>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Created on <%= displayDateAndTime(paymentProof.updated) %></h5>
+          <p class="card-text">Status: <%= paymentProof.status %></p>
+          <p class="card-text">E-Wallet Channel: <%= paymentProof.channel_code %></p>
+          <p class="card-text">Amount: Rp <%= dotTotalPrices(paymentProof.capture_amount) %>,00</p>
+        </div>
+      </div>
+    <% } %> 
+  </section>
+</main>

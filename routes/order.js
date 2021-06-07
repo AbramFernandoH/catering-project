@@ -15,8 +15,11 @@ let { orderCart } = require('./user');
 
 const xendit = new Xendit({ secretKey: process.env.XENDIT_SECRET_KEY });
 
-const { Card } = xendit;
+const { Card, EWallet, Customer, Disbursement } = xendit;
 const card = new Card({});
+const customer = new Customer({});
+const ewallet = new EWallet({});
+const disbursement = new Disbursement({});
 
 router.route('/')
   .get( isLoggedIn, async (req, res) => {
@@ -67,8 +70,25 @@ router.route('/')
   .patch( isLoggedIn, isAdmin, async (req, res) => {
     const { id } = req.query;
     const { status } = req.body;
-    const findOrder = await Order.findById(id).populate('menu');
-    await Order.updateOne({_id: id}, { status });
+    const findOrder = await Order.findById(id).populate('menu').populate('owner');
+    const { chargeId, paymentMethod } = findOrder.payment[0];
+    if(status === 'Order rejected by seller' && paymentMethod === 'CARD'){
+      const cardCharge = await card.getCharge({ chargeID: chargeId });
+      const refundURL = `https://api.xendit.co/credit_card_charges/${chargeId}/refunds`;
+      const refundHeaders = { 'Content-Type': 'application/json', 'Authorization': process.env.BASE64_FORMAT, 'X-IDEMPOTENCY-KEY': uuidv4(), 'x-api-version': '2019-05-01' };
+      const refundInfo = { amount: `${findOrder.totalPrices - 5000}`, external_id: cardCharge.external_id };
+      const makeRefund = await fetch(refundURL, {
+        method: 'POST',
+        headers: refundHeaders,
+        body: JSON.stringify(refundInfo)
+      });
+      const refundResult = await makeRefund.json();
+      if(refundResult.status === 'FAILED'){
+        req.flash('error', 'refund failed');
+        return res.redirect(`/admin/orders/${findOrder.menu._id}`);
+      }
+    }
+    await findOrder.updateOne({ status });
     res.redirect(`/admin/orders/${findOrder.menu._id}`);
   });
 
@@ -90,7 +110,7 @@ router.route('/:orderId')
   .delete( isLoggedIn, async (req, res) => {
     const userId = req.user._id;
     const { orderId } = req.params;
-    const findOrder = await Order.findById(orderId);
+    const findOrder = await Order.findById(orderId).populate('menu').populate('owner');
     const payment = findOrder.payment[0];
     if(payment.paymentMethod === 'CARD'){
       const cardCharge = await card.getCharge({ chargeID: payment.chargeId });
@@ -106,6 +126,40 @@ router.route('/:orderId')
       if(refundResult.status === 'FAILED'){
         req.flash('error', 'refund failed');
         return res.redirect(`/myorders/${userId}`);
+      }
+    }else if(payment.paymentMethod === 'EWALLET'){
+      const findCustomer = await customer.getCustomerByReferenceID({ referenceID: findOrder.owner.customerId });
+      const accountHolderName = [];
+      accountHolderName.push(findCustomer[0].given_names);
+      if(findCustomer[0].middle_name && findCustomer[0].surname){
+        accountHolderName.push(findCustomer[0].middle_name);
+        accountHolderName.push(findCustomer[0].surname);
+      } else if(findCustomer[0].surname){
+        accountHolderName.push(findCustomer[0].surname);
+      }
+      const findCharge = await ewallet.getEWalletChargeStatus({ chargeID: payment.chargeId });
+      const ewalletCode = (findCharge.channel_code).split('_');
+      const accountNumber = (findCustomer[0].mobile_number).replace('+62', '0');
+      const newDisbursement = await disbursement.create({
+        externalID: uuidv4(),
+        bankCode: ewalletCode[1],
+        accountHolderName: accountHolderName.join(' '),
+        accountNumber,
+        amount: (findOrder.totalPrices) - 10000,
+        description: `Order cancel for ${findOrder.quantity} package of ${findOrder.menu.title}`
+      });
+      if(newDisbursement.status === 'PENDING'){
+        const findDisbursement = await disbursement.getByID({ disbursementID: newDisbursement.id });
+        const disbursementStatus = async () => findDisbursement;
+        const checkDisbursement = setInterval(disbursementStatus, 1000);
+        if(checkDisbursement.status === 'FAILED'){
+          clearInterval(checkDisbursement);
+          req.flash('error', 'refund failed');
+          return res.redirect(`/myorders/${userId}`);
+        }
+        if(checkDisbursement.status === 'COMPLETED'){
+          clearInterval(checkDisbursement);
+        }
       }
     }
     await User.updateOne({_id: userId}, { $pull: { order: orderId } });
