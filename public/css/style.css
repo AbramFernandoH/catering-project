@@ -3,6 +3,17 @@
   padding: 0;
 }
 
+input[type="number"] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none;
+}
+
 /* 
 font-style:
 font-family: 'Abril Fatface', cursive;
@@ -548,6 +559,12 @@ footer{
   margin-top: 2%;
 }
 
+#order-cart .empty-cart{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* order-cart end */
 
 /* payment-card start */
@@ -578,6 +595,63 @@ footer{
 }
 
 /* payment-card end */
+
+/* payment-ovo start */
+
+#payment-ovo{
+  padding: 5% 8% 0;
+  min-height: 100vh;
+  display: grid;
+  align-items: center;
+  background-color: rgba(140, 255, 140, .7);
+}
+
+#payment-ovo h1{
+  font-size: 2rem;
+  color: rgba(140, 255, 140, 1);
+  font-weight: 700;
+}
+
+#payment-ovo h3{
+  font-size: 1.2rem;
+  color: rgba(140, 255, 140, 1);
+  font-weight: 700;
+}
+
+/*
+rgba(62, 179, 62, .7)
+rgba(140, 255, 140, 1)
+rgba(116, 255, 116, 1)
+rgba(179, 45, 112, .7)
+rgba(255, 115, 185, 1)
+*/
+
+.ovo-payment-form{
+  background-color: rgba(179, 45, 112, 1);
+  border-radius: 5%;
+  padding: 8%;
+}
+
+#payment-ovo h3, .ovo-num, .ovo-btn{
+  margin-top: 8%;
+}
+
+.ovo-num p{
+  font-size: .8rem;
+}
+
+.ovo-btn{
+  display: grid;
+  align-items: center;
+}
+
+.ovo-btn button{
+  color: white;
+  font-size: 1.2rem;
+  background-color: rgb(93, 13, 139);
+}
+
+/* payment-ovo end */
 
 /* Media Queries */
 
@@ -641,6 +715,10 @@ footer{
 
   #my-orders .card img{
     height: 14rem;
+  }
+
+  .ovo-payment-form{
+    padding: 6%;
   }
 }
 
@@ -727,6 +805,15 @@ footer{
   #order-cart{
     padding-top: 12%;
   }
+
+  #payment-ovo{
+    grid-template-columns: repeat(20, 1fr);
+  }
+
+  .ovo-payment-form{
+    grid-column: 2 / 20;
+  }
+  
 }
 
 @media screen and (min-width: 815px) {
@@ -796,6 +883,9 @@ footer{
     margin-top: 12%;
   }
 
+  .ovo-payment-form{
+    grid-column: 3 / 19;
+  }
 }
 
 @media screen and (min-width: 992px) {
@@ -1068,12 +1158,59 @@ footer{
     margin-top: 2%;
     grid-column: 1 / -1;
   }
+
+  .ovo-payment-form{
+    display: grid;
+    grid-template: repeat(4, auto) / repeat(12, 1fr);
+    padding: 6% 4%;
+  }
+
+  #payment-ovo h1, #payment-ovo h3{
+    grid-column: 1 / -1;
+  }
+
+  #payment-ovo h1{
+    font-size: 2.3rem;
+  }
+
+  #payment-ovo h3{
+    margin-top: 3%;
+    font-size: 1.5rem;
+  }
+
+  .ovo-num{
+    grid-column: 2 / 12;
+  }
+
+  .ovo-num p{
+    font-size: 1.1rem;
+  }
+
+  .ovo-btn{
+    grid-column: 3 / 11;
+  }
+
+  .ovo-num, .ovo-btn{
+    margin-top: 5%;
+  }
+
+  .ovo-btn button{
+    font-size: 1.5rem;
+  }
 }
 
 @media screen and (min-width: 1145px) {
   #testimoni .carousel-item .slider-img{
     width: 30%;
     height: 30%;
+  }
+
+  #payment-ovo{
+    padding: 3% 5% 0;
+  }
+
+  .ovo-payment-form{
+    grid-column: 4 / 18;
   }
 }
 

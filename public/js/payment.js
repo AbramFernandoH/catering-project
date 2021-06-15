@@ -8,6 +8,82 @@ const cardCVN = document.querySelector('#card-cvn');
 const modal3DS = document.querySelector('#modal3DS');
 const iframe = document.querySelector('#iframe-card-payment');
 
+const JCB = /^[3][5]([2][8-9]|[3-8][0-9])/;
+const Visa = /^[4]/;
+const Mastercard = /^[5][1-5]|[2]([2][2-9][1-9]\d\d|[3-6]\d\d\d\d|[7]([0-1]\d\d\d|[2][0]\d\d))/;
+
+const date = new Date();
+
+cardNumber.addEventListener('input', () => {
+  const CCNumCode = Mastercard || Visa || JCB;
+  if((cardNumber.value).match(JCB) !== null){
+    const JCBStyle = 'background-image: url(/icons/JCB_card.svg); background-position: 95%; background-repeat: no-repeat; background-size: 30px; padding-right: 15px;';
+    cardNumber.setAttribute('style', JCBStyle);
+  }else if((cardNumber.value).match(Visa) !== null){
+    const VisaStyle = 'background-image: url(/icons/Visa_card.svg); background-position: 95%; background-repeat: no-repeat; background-size: 30px; padding-right: 15px;';
+    cardNumber.setAttribute('style', VisaStyle);
+  }else if((cardNumber.value).match(Mastercard) !== null){
+    const MastercardStyle = 'background-image: url(/icons/Mastercard_card.svg); background-position: 95%; background-repeat: no-repeat; background-size: 30px; padding-right: 15px;';
+    cardNumber.setAttribute('style', MastercardStyle);
+  } else if((cardNumber.value).match(CCNumCode) === null) {
+    cardNumber.removeAttribute('style');
+  }
+
+  if((cardNumber.value).length === 16){
+    expMonth.focus();
+  }
+
+});
+
+expMonth.addEventListener('input', () => {
+  if((expMonth.value).length === 2){
+    if(parseInt(expMonth.value) > 12 || parseInt(expMonth.value) < 0){
+      alert('please input the right number of your card expired month');
+      expMonth.setAttribute('style', 'border: solid red;');
+      return expMonth.focus();
+    }
+
+    if(expMonth.getAttribute('style') !== null){
+      expMonth.removeAttribute('style');
+    }
+
+    expYear.focus();
+  }
+});
+
+expYear.addEventListener('input', () => {
+  const pastYear = date.getFullYear() - 1;
+  if((expYear.value).length === 4){
+    if(parseInt(expYear.value) <= pastYear){
+      alert('please input the right number of your card expired year');
+      expYear.setAttribute('style', 'border: solid red;');
+      return expYear.focus();
+    }
+
+    if(expYear.getAttribute('style') !== null){
+      expYear.removeAttribute('style');
+    }
+
+    cardCVN.focus();
+  }
+});
+
+cardCVN.addEventListener('input', () => {
+  if((cardCVN.value).length === 3){
+    if((cardCVN.value).length > 3){
+      alert('please enter the right cvc code');
+      cardCVN.setAttribute('style', 'border: solid red;');
+      return cardCVN.focus();
+    }
+
+    if(cardCVN.getAttribute('style') !== null){
+      cardCVN.removeAttribute('style');
+    }
+
+    cardCVN.blur();
+  }
+});
+
 async function xenditResponseHandler(err, cardToken){
   if(err){
     document.querySelector('#pay-card-error').value = err.message;
@@ -77,6 +153,29 @@ paymentForm.addEventListener('submit', async(evt) => {
   amount.setAttribute('name', 'amount');
   amount.setAttribute('value', paymentForm.getAttribute('tp'));
   await document.querySelector('#form-payment-card .hidden-inputs').appendChild(amount);
+
+  // const todayYear = date.getFullYear();
+  // const todayMonth = date.getMonth() + 1;
+
+  // const wrongMonth = parseInt(expMonth.value) <= todayMonth || parseInt(expMonth.value) > 12;
+
+  // if(parseInt(expYear.value) >= todayYear){
+  //   if(parseInt(expYear.value) === todayYear && wrongMonth ){
+  //     expMonth.setAttribute('style', 'border: solid red;');
+  //     return expMonth.focus();
+  //   }
+    
+  //   if(expYear.getAttribute('style') || expMonth.getAttribute('style' !== null)){
+  //     expMonth.removeAttribute('style');
+  //     expYear.removeAttribute('style');
+  //   }
+
+  // } else {
+  //   expMonth.setAttribute('style', 'border: solid red;');
+  //   expYear.setAttribute('style', 'border: solid red;');
+  //   return expMonth.focus();
+  // }
+
   Xendit.card.createToken({
     amount: amount.value,
     card_number: cardNumber.value,

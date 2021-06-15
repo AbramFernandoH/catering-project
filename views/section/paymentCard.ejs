@@ -7,19 +7,19 @@
     <form action="/payment?paymentMethod=<%= method %>&cartId=<%= cart.id %>" id="form-payment-card" method="post" tp="<%= cart.totalPrices %>">
       <div class="mb-3 card-number">
         <label for="card-number" class="form-label">Card Number</label>
-        <input type="text" class="form-control" id="card-number" name="card_number">
+        <input type="text" class="form-control" id="card-number" name="card_number" placeholder="**** **** **** ****">
       </div>
       <div class="mb-3 exp-month">
         <label for="exp-month" class="form-label">Expired Month</label>
-        <input type="text" class="form-control" id="exp-month" name="card_exp_month">
+        <input type="number" class="form-control" id="exp-month" name="card_exp_month" placeholder="MM" min="1" max="12">
       </div>
       <div class="mb-3 exp-year">
         <label for="exp-year" class="form-label">Expired Year</label>
-        <input type="text" class="form-control" id="exp-year" name="card_exp_year">
+        <input type="number" class="form-control" id="exp-year" name="card_exp_year" placeholder="YYYY" min="<%= minYear %>">
       </div>
       <div class="mb-3 card-cvn">
-        <label for="card-cvn" class="form-label">Cvn Code</label>
-        <input type="number" name="card_cvn" id="card-cvn" class="form-control">
+        <label for="card-cvn" class="form-label">Cvc Code</label>
+        <input type="number" name="card_cvn" id="card-cvn" class="form-control" placeholder="***">
       </div>
       <div class="hidden-inputs">
       </div>

@@ -18,11 +18,9 @@ const upload = multer({ storage });
 
 const xendit = new Xendit({ secretKey: process.env.XENDIT_SECRET_KEY });
 
-const { EWallet } = xendit;
-const ewallet = new EWallet({});
-
-const { Customer } = xendit;
+const { Customer, EWallet } = xendit;
 const customer = new Customer({});
+const ewallet = new EWallet({});
 
 const orderCart = [];
 
@@ -104,6 +102,9 @@ router.route('/cart')
     const findIndex = orderCart.findIndex(cart => cart.id === id);
     orderCart.splice(findIndex, 1);
     req.session.cart = orderCart;
+    if(orderCart.length === 0){
+      delete req.session.cart;
+    }
     res.redirect('/cart');
   });
 
@@ -112,19 +113,35 @@ router.route('/payment')
     const { method, cartId } = req.query;
     const cart = orderCart.find(cart => cart.id === cartId);
     if(method === 'card'){
-      return res.render('section/paymentCard', { headTitle: 'Card Payment', method, cart, dotTotalPrices });
+      const date = new Date();
+      const minYear = date.getFullYear();
+      return res.render('section/paymentCard', { headTitle: 'Card Payment', method, cart, minYear, dotTotalPrices });
     }
-    const eWalletPMs = ['OVO', 'SHOPEEPAY', 'DANA', 'LINKAJA'];
-    res.render('section/payment', { headTitle: 'E-Wallet Payment', method, cart, eWalletPMs });
+    const findUser = await User.findById(cart.owner);
+    const findCustomer = await customer.getCustomerByReferenceID({
+      referenceID: findUser.customerId
+    });
+    res.render('section/paymentOvo', { headTitle: 'Ovo Payment', method, cart, findCustomer, dotTotalPrices });
   })
   .post(isLoggedIn, async (req, res) => {
     const currentUser = req.user._id;
     const { paymentMethod, cartId } = req.query;
     const cart = orderCart.find(cart => cart.id === cartId);
-    const { menu, quantity, message, totalPrices, owner } = cart;
+    const { menu, menuTitle, quantity, message, totalPrices, owner } = cart;
+
+    const findUser = await User.findById(currentUser);
+    // const newInvoice = await invoice.createInvoice({
+    //   externalID: `invoice_${uuidv4()}`,
+    //   amount: totalPrices,
+    //   payerEmail: findUser.email,
+    //   description: `order for ${quantity} packages of ${menuTitle}`,
+    //   shouldSendEmail: true,
+    //   paymentMethods: ["CREDIT_CARD", "OVO"]
+    // });
+    // console.log(newInvoice);
+
     switch (paymentMethod) {
       case 'card':
-        const findUser = await User.findById(currentUser);
         const searchCustomer = await customer.getCustomerByReferenceID({
           referenceID: findUser.customerId
         });
@@ -154,6 +171,9 @@ router.route('/payment')
           const findIndex = orderCart.findIndex(cart => cart.id === cartId);
           orderCart.splice(findIndex, 1);
           req.session.cart = orderCart;
+          if(orderCart.length === 0){
+            delete req.session.cart;
+          }
           req.flash('success', 'Successfully make a new order');
           return res.redirect(`/myorders/${currentUser}`);
         }
@@ -213,22 +233,18 @@ router.route('/payment')
         break;
     
       case 'ew':
-        const { eWallet } = req.body;
-        const user = await User.findById(currentUser);
-        const findMenu = await Menu.findById(menu);
         const findCustomer = await customer.getCustomerByReferenceID({
-          referenceID: user.customerId
+          referenceID: findUser.customerId
         });
 
-        if(eWallet === 'ID_OVO'){
-          try{
-            const createEWCharge = await ewallet.createEWalletCharge({
+        try{
+          const createEWCharge = await ewallet.createEWalletCharge({
             referenceID: `ewallet_charge_${uuidv4()}`,
             currency: 'IDR',
             amount: parseInt(totalPrices),
             checkoutMethod: 'ONE_TIME_PAYMENT',
             channelCode: 'ID_OVO',
-            customerID: user.customerId,
+            customerID: findUser.customerId,
             channelProperties: {
               mobileNumber: findCustomer[0].mobile_number
             }
@@ -250,48 +266,7 @@ router.route('/payment')
             //   const findEWCharge = await ewallet.getEWalletChargeStatus({ chargeID: createEWCharge.id });
             // }catch(err){ console.log(err) }
           }
-          } catch(err){ console.log(err) }
-        } else {
-          try{
-          const createEWCharge = await ewallet.createEWalletCharge({
-            referenceID: `ewallet_charge_${uuidv4()}`,
-            currency: 'IDR',
-            amount: parseInt(totalPrices),
-            checkoutMethod: 'ONE_TIME_PAYMENT',
-            channelCode: eWallet,
-            customerID: user.customerId,
-            channelProperties: {
-              successRedirectURL: `http://localhost:3000/myorders/${currentUser}`
-            },
-            basket: [
-              {
-                referenceID: findMenu.id,
-                name: findMenu.title,
-                category: 'Food',
-                currency: 'IDR',
-                price: 50000,
-                quantity,
-                type: 'PRODUCT'
-              }
-            ]
-          });
-          if(createEWCharge.channel_code === 'ID_SHOPEEPAY'){
-            if(createEWCharge.status === 'PENDING'){
-              req.session.ewId = createEWCharge.id;
-              req.session.cartId = cartId;
-              return res.redirect(createEWCharge.actions.mobile_deeplink_checkout_url);
-            }
-          } else if(createEWCharge.channel_code === 'ID_LINKAJA' || 'ID_DANA'){
-            if(createEWCharge.status === 'PENDING'){
-              req.session.ewId = createEWCharge.id;
-              req.session.cartId = cartId;
-              return res.redirect(createEWCharge.actions.desktop_web_checkout_url);
-            }
-          }
-          
-          } catch(err){ console.log(err) }
-        }
-        
+        } catch(err){ console.log(err) }
         break;
     }
   });
@@ -341,6 +316,9 @@ router.get('/myorders/:userId', isLoggedIn, async (req, res) => {
       const findIndex = orderCart.findIndex(cart => cart.id === cartId);
       orderCart.splice(findIndex, 1);
       req.session.cart = orderCart;
+      if(orderCart.length === 0){
+        delete req.session.cart;
+      }
       req.flash('success', 'Successfully make a new order');
       delete req.session.ewId;
       delete req.session.cartId;

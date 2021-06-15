@@ -5,28 +5,32 @@
     <div class="row">
       <% if(carts){ %>
         <p class="text-danger text-center">*You still can edit your order in checkout page (except for menu that you already choose)</p>
-      <% for(let cart of carts){ %> 
-      <div class="col-sm-6">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title"><%= cart.menuTitle %></h5>
-            <p class="card-text">Date : <%= cart.menuDate %></p>
-            <p class="card-text">Quantity : <%= cart.quantity %></p>
-            <% if(cart.message){ %> 
-              <p class="card-text">Message: <%= cart.message %></p>
-            <% } else { %> 
-              <p class="card-text">Message: <span class="text-muted">None</span></p>
-            <% } %> 
-            <p class="card-text">Total Prices : Rp <%= dotTotalPrices(cart.totalPrices) %></p>
-            <a href="/cart/<%= cart.id %>" class="btn btn-success">Checkout</a>
-            <form action="/cart?_method=DELETE&id=<%= cart.id %>" method="post">
-              <button class="btn btn-danger">Cancel</button>
-            </form>
+        <% for(let cart of carts){ %> 
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"><%= cart.menuTitle %></h5>
+              <p class="card-text">Date : <%= cart.menuDate %></p>
+              <p class="card-text">Quantity : <%= cart.quantity %></p>
+              <% if(cart.message){ %> 
+                <p class="card-text">Message: <%= cart.message %></p>
+              <% } else { %> 
+                <p class="card-text">Message: <span class="text-muted">None</span></p>
+              <% } %> 
+              <p class="card-text">Total Prices : Rp <%= dotTotalPrices(cart.totalPrices) %></p>
+              <a href="/cart/<%= cart.id %>" class="btn btn-success">Checkout</a>
+              <form action="/cart?_method=DELETE&id=<%= cart.id %>" method="post">
+                <button class="btn btn-danger">Cancel</button>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
-      <% } %> 
-      <% } %> 
+        <% } %>
+      <% } else { %>
+        <div class="empty-cart">
+          <h5>Your cart is empty, please make an order</h5>
+        </div>
+      <% } %>
     </div>
   </section>
 </main>

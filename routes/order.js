@@ -62,6 +62,9 @@ router.route('/')
         const findIndex = orderCart.findIndex(cart => cart.id === cartId);
         orderCart.splice(findIndex, 1);
         req.session.cart = orderCart;
+        if(orderCart.length === 0){
+          delete req.session.cart;
+        }
         req.flash('success', 'Successfully make a new order');
         res.redirect(`/myorders/${currentUser}`);
         break;
@@ -86,6 +89,40 @@ router.route('/')
       if(refundResult.status === 'FAILED'){
         req.flash('error', 'refund failed');
         return res.redirect(`/admin/orders/${findOrder.menu._id}`);
+      }
+    } else if(status === 'Order rejected by seller' && paymentMethod === 'EWALLET'){
+      const findCustomer = await customer.getCustomerByReferenceID({ referenceID: findOrder.owner.customerId });
+      const accountHolderName = [];
+      accountHolderName.push(findCustomer[0].given_names);
+      if(findCustomer[0].middle_name && findCustomer[0].surname){
+        accountHolderName.push(findCustomer[0].middle_name);
+        accountHolderName.push(findCustomer[0].surname);
+      } else if(findCustomer[0].surname){
+        accountHolderName.push(findCustomer[0].surname);
+      }
+      const findCharge = await ewallet.getEWalletChargeStatus({ chargeID: findOrder.payment[0].chargeId });
+      const ewalletCode = (findCharge.channel_code).split('_');
+      const accountNumber = (findCustomer[0].mobile_number).replace('+62', '0');
+      const newDisbursement = await disbursement.create({
+        externalID: `disbursement_${uuidv4()}`,
+        bankCode: ewalletCode[1],
+        accountHolderName: accountHolderName.join(' '),
+        accountNumber,
+        amount: (findOrder.totalPrices) - 5000,
+        description: `Order cancel for ${findOrder.quantity} package of ${findOrder.menu.title}`
+      });
+      if(newDisbursement.status === 'PENDING'){
+        const findDisbursement = await disbursement.getByID({ disbursementID: newDisbursement.id });
+        const disbursementStatus = async () => findDisbursement;
+        const checkDisbursement = setInterval(disbursementStatus, 1000);
+        if(checkDisbursement.status === 'FAILED'){
+          clearInterval(checkDisbursement);
+          req.flash('error', 'refund failed');
+          return res.redirect(`/myorders/${userId}`);
+        }
+        if(checkDisbursement.status === 'COMPLETED'){
+          clearInterval(checkDisbursement);
+        }
       }
     }
     await findOrder.updateOne({ status });
@@ -141,7 +178,7 @@ router.route('/:orderId')
       const ewalletCode = (findCharge.channel_code).split('_');
       const accountNumber = (findCustomer[0].mobile_number).replace('+62', '0');
       const newDisbursement = await disbursement.create({
-        externalID: uuidv4(),
+        externalID: `disbursement_${uuidv4()}`,
         bankCode: ewalletCode[1],
         accountHolderName: accountHolderName.join(' '),
         accountNumber,
