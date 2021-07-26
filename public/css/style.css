@@ -120,18 +120,42 @@ main{
 
 /* about us start */
 
-#about-us{
-  min-height: 100vh;
-}
-
-#about-us, #order-menu{
+#about-us, #order-menu, #our-advantages{
   padding: 5% 10%;
 }
 
-#about-us div.our-advantages{
-  display: grid;
-  grid-template-rows: repeat(4, auto);
-  row-gap: 2rem;
+#about-us{
+  background-color: rgba(140, 255, 140, 1);
+}
+
+.about-us-title{
+  color: rgba(179, 45, 112, 1);
+}
+
+#about-us p{
+  color: #299229;
+  line-height: 1.5;
+}
+
+/* About us end */
+
+/* Our Advantages start */
+
+#our-advantages{
+  background-color: rgba(179, 45, 112, .7);
+}
+
+.our-advantages-title{
+  color: rgba(140, 255, 140, 1);
+}
+
+.our-advantages .fas{
+  font-size: 2.5rem;
+  color: rgba(179, 45, 112, 1);
+}
+
+.fast-delivery{
+  margin-top: 1rem;
 }
 
 .fast-delivery, .fresh-food, .delicious, .affordable-prices{
@@ -140,7 +164,8 @@ main{
   justify-content: center;
   padding: 2%;
   width: 70%;
-  border-radius: 10%;
+  border-radius: 15px;
+  background-color: rgba(140, 255, 140, 1);
 }
 
 .fast-delivery h4, .fresh-food h4, .delicious h4, .affordable-prices h4{
@@ -148,11 +173,11 @@ main{
   font-weight: 700;
 }
 .fast-delivery p, .fresh-food p, .delicious p, .affordable-prices p{
-  color: rgba(255, 115, 185, 1);
+  color: rgb(223, 57, 140);
   font-weight: bolder;
 }
 
-/* About us end */
+/* Our Advantages start */
 
 /* Menus this week start */
 
@@ -272,6 +297,7 @@ i.fa-chevron-left, i.fa-chevron-right{
 
 #order-menu{
   margin-top: 18%;
+  color: #B32D70;
 }
 
 #order-menu h1{
@@ -301,13 +327,13 @@ i.fa-chevron-left, i.fa-chevron-right{
   text-align: center;
   display: grid;
   row-gap: 1.3rem;
-  background-color: #66FFBD;
+  background-color: rgba(140, 255, 140, .8);
   padding: 5% 10% 8%;
 }
 
 #contact-us h1{
   font-weight: 700;
-  color: rgba(179, 45, 112, .9);
+  color: rgba(255, 115, 185, 1);
   font-size: 3rem;
   margin-bottom: 1rem;
 }
@@ -570,17 +596,30 @@ footer{
 /* payment-card start */
 
 #payment-card{
-  padding: 20% 10% 0;
+  display: grid;
+  align-items: center;
+  padding: 18% 10% 8%;
   min-height: 100vh;
+  background-color: rgba(140, 255, 140, .7);
 }
 
 #payment-card h1{
   font-weight: 700;
+  color: #468046;
+}
+
+#payment-card h4{
+  color: #509750;
+  margin-top: 2%;
 }
 
 #form-payment-card{
   margin-top: 8%;
   display: grid;
+  background-color: rgba(179, 45, 112, 1);
+  color: white;
+  border-radius: 5%;
+  padding: 8%;
 }
 
 .submit-card-btn{
@@ -590,8 +629,14 @@ footer{
 }
 
 .submit-card-btn .pay-btn{
-  background-color: rgba(179, 45, 112, 1);
+  background-color: rgba(255, 115, 185, 1);
   color: white;
+  font-weight: 700;
+}
+
+.submit-card-btn .pay-btn:hover{
+  background-color: white;
+  color: rgba(255, 115, 185, 1);
 }
 
 /* payment-card end */
@@ -648,7 +693,13 @@ rgba(255, 115, 185, 1)
 .ovo-btn button{
   color: white;
   font-size: 1.2rem;
+  font-weight: 700;
   background-color: rgb(93, 13, 139);
+}
+
+.ovo-btn button:hover{
+  background-color: white;
+  color: rgb(93, 13, 139);
 }
 
 /* payment-ovo end */
@@ -683,6 +734,10 @@ rgba(255, 115, 185, 1)
 
   #order-cart{
     padding-top: 15%;
+  }
+
+  #payment-card{
+    padding-top: 16%;
   }
 }
 
@@ -761,11 +816,27 @@ rgba(255, 115, 185, 1)
   }
 
   #payment-card{
-    padding-top: 15%;
+    padding-top: 14%;
+  }
+
+  #form-payment-card{
+    padding: 6% 8%;
   }
 
   .submit-card-btn{
     margin-top: 5%;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .fast-delivery, .fresh-food, .delicious, .affordable-prices{
+    width: inherit;
+    min-width: 300px;
+    margin-bottom: 0;
+  }
+
+  .fast-delivery{
+    margin-top: 0;
   }
 }
 
@@ -883,6 +954,10 @@ rgba(255, 115, 185, 1)
     margin-top: 12%;
   }
 
+  #payment-card{
+    padding-top: 12%;
+  }
+
   .ovo-payment-form{
     grid-column: 3 / 19;
   }
@@ -931,6 +1006,17 @@ rgba(255, 115, 185, 1)
   header .heading button a{
     font-size: 1.7rem;
   }
+
+  .our-advantages .fas{
+    font-size: 3rem;
+  }
+
+  /* .fast-delivery h4, .fresh-food h4, .delicious h4, .affordable-prices h4{
+    
+  }
+  .fast-delivery p, .fresh-food p, .delicious p, .affordable-prices p{
+    
+  } */
 
   #menus-this-week .days{
     grid-template: repeat(3, auto) / repeat(3, 32%);
@@ -1138,12 +1224,18 @@ rgba(255, 115, 185, 1)
 
   #payment-card{
     padding-top: 10%;
+    padding-bottom: 2%;
   }
 
   #form-payment-card{
     margin-top: 4%;
     grid-template: repeat(3, auto) / repeat(12, 1fr);
     column-gap: 2%;
+    padding: 5% 5% 4%;
+  }
+
+  #payment-card h4{
+    margin-top: 0;
   }
 
   .card-number, .exp-year{
@@ -1199,6 +1291,40 @@ rgba(255, 115, 185, 1)
   }
 }
 
+@media screen and (min-width: 992px) and (min-height: 700px) {
+  #payment-card h4{
+    margin-top: -2%;
+  }
+
+  #form-payment-card{
+    margin-top: 0;
+  }
+}
+
+@media screen and (min-width: 992px) and (min-height: 800px) {
+  #payment-card h4{
+    margin-top: -6%;
+  }
+
+  #form-payment-card{
+    margin-top: -4%;
+  }
+}
+
+@media screen and (min-width: 992px) and (min-height: 880px) {
+  #payment-card{
+    padding-top: 7%;
+  }
+
+  #payment-card h4{
+    margin-top: -10%;
+  }
+
+  #form-payment-card{
+    margin-top: -8%;
+  }
+}
+
 @media screen and (min-width: 1145px) {
   #testimoni .carousel-item .slider-img{
     width: 30%;
@@ -1212,6 +1338,10 @@ rgba(255, 115, 185, 1)
   .ovo-payment-form{
     grid-column: 4 / 18;
   }
+
+  #payment-card{
+    padding-top: 8%;
+  }
 }
 
 @media screen and (min-width: 1230px) {
@@ -1219,7 +1349,7 @@ rgba(255, 115, 185, 1)
     padding: 17% 10%;
   } */
 
-  #menus-this-week h1, #my-orders h1{
+  #menus-this-week h1, #my-orders h1, #our-advantages h1{
     font-size: 3rem;
   }
 
@@ -1249,5 +1379,11 @@ rgba(255, 115, 185, 1)
 
   #order-cart{
     padding-top: 6%;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  #our-advantages .our-advantages .w-100{
+    display: none!important;
   }
 }

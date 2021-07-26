@@ -3,11 +3,11 @@
   <section id="payment-card">
     <%- include('../partials/flash') %>
     <h1 class="text-center">Card Payment</h1>
-    <h4 class="text-center mt-3">Amount: Rp <%= dotTotalPrices(cart.totalPrices) %>,00</h4>
+    <h4 class="text-center">Total Amount: Rp <%= dotTotalPrices(cart.totalPrices) %>,00</h4>
     <form action="/payment?paymentMethod=<%= method %>&cartId=<%= cart.id %>" id="form-payment-card" method="post" tp="<%= cart.totalPrices %>">
       <div class="mb-3 card-number">
         <label for="card-number" class="form-label">Card Number</label>
-        <input type="text" class="form-control" id="card-number" name="card_number" placeholder="**** **** **** ****">
+        <input type="text" class="form-control" id="card-number" name="card_number" placeholder="•••• •••• •••• ••••">
       </div>
       <div class="mb-3 exp-month">
         <label for="exp-month" class="form-label">Expired Month</label>
@@ -19,16 +19,14 @@
       </div>
       <div class="mb-3 card-cvn">
         <label for="card-cvn" class="form-label">Cvc Code</label>
-        <input type="number" name="card_cvn" id="card-cvn" class="form-control" placeholder="***">
+        <input type="number" name="card_cvn" id="card-cvn" class="form-control" placeholder="•••">
       </div>
       <div class="hidden-inputs">
       </div>
-      <div class="mb-3 submit-card-btn">
+      <div class="submit-card-btn">
         <button class="btn btn-lg pay-btn" id="pay-card">Pay</button>
       </div>
     </form>
-
-    <a href="/cart/<%= cart.id %>" class="btn btn-danger">Cancel</a>
 
     <p id="pay-card-error"></p>
 

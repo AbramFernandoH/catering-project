@@ -18,10 +18,12 @@
                 <p class="card-text">Message: <span class="text-muted">None</span></p>
               <% } %> 
               <p class="card-text">Total Prices : Rp <%= dotTotalPrices(cart.totalPrices) %></p>
-              <a href="/cart/<%= cart.id %>" class="btn btn-success">Checkout</a>
-              <form action="/cart?_method=DELETE&id=<%= cart.id %>" method="post">
-                <button class="btn btn-danger">Cancel</button>
-              </form>
+              <div class="order-cart-btn d-flex">
+                <a href="/cart/<%= cart.id %>" class="btn btn-success me-3">Checkout</a>
+                <form action="/cart?_method=DELETE&id=<%= cart.id %>" method="post">
+                  <button class="btn btn-danger">Cancel</button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
