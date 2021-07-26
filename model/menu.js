@@ -24,8 +24,7 @@ const MenuSchema = new Schema({
     type: String,
     required: true
   },
-  images: [ImagesSchema],
-  productId: String
+  images: [ImagesSchema]
 });
 
 MenuSchema.post('findOneAndUpdate', async(doc) =>{

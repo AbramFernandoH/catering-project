@@ -1,6 +1,5 @@
 const express = require('express');
 const multer = require('multer');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const router = express.Router();
 
 const { storage, cloudinary } = require('../cloudinary/cloudinary');
@@ -31,19 +30,7 @@ router.route('/menu/create')
     const images = req.files.map(f => ({url: f.path, filename: f.filename}));
     const newMenu = new Menu({...req.body});
     newMenu.images = images;
-    newMenu.save();
-    // const imagesUrl = newMenu.images.map(img => img.url);
-    // const newProduct = await stripe.products.create({
-    //   name: newMenu.title,
-    //   description: newMenu.description,
-    //   images: imagesUrl,
-    //   metadata: { menuId: newMenu.id }
-    // });
-    // await stripe.prices.create({
-    //   unit_amount: 5000000,
-    //   currency: 'idr',
-    //   product: newProduct.id
-    // });
+    await newMenu.save();
     res.redirect('/admin');
   });
 
