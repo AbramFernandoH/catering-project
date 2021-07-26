@@ -33,7 +33,9 @@ const dateValue = date => {
 
 const displayDay = date => moment(date).format('dddd');
 
-const dotTotalPrices = (val) => {
+const displayDateAndTime = date => moment(date).format('MMMM Do YYYY, h:mm:ss a');
+
+const dotTotalPrices = val => {
   const value = val.toString();
   const totalPrices = [...value];
   if(totalPrices.length >= 7){
@@ -47,4 +49,14 @@ const dotTotalPrices = (val) => {
   return totalPrices.join('');
 }
 
-module.exports = { calendarFormat, minDate, maxDate, menuDate, displayDate, dateValue, displayDay, dotTotalPrices }
+const middleName = name => {
+  if(name.middleName){ return name.middleName }
+  return null;
+};
+
+const surname = name => {
+  if(name.lastName){ return name.lastName }
+  return null;
+};
+
+module.exports = { calendarFormat, minDate, maxDate, menuDate, displayDate, dateValue, displayDay, dotTotalPrices, middleName, surname, displayDateAndTime }

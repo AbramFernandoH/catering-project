@@ -7,9 +7,27 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
-  address: {
-    type: String,
-    required: true
+  addresses: {
+    streetLine1: {
+      type: String,
+      required: true
+    },
+    streetLine2: {
+      type: String,
+      required: true
+    },
+    city: {
+      type: String,
+      required: true
+    },
+    province: {
+      type: String,
+      required: true
+    },
+    postalCode: {
+      type: String,
+      required: true
+    }
   },
   admin: Boolean,
   order: [{

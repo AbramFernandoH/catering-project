@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const Xendit = require('xendit-node');
 const router = express.Router();
 
 const { storage, cloudinary } = require('../cloudinary/cloudinary');
@@ -9,8 +10,13 @@ const Menu = require('../model/menu');
 const User = require('../model/user');
 const Order = require('../model/order');
 const { isLoggedIn, isAdmin } = require('../middleware');
-const { minDate, maxDate, menuDate, displayDate, displayDay } = require('../helperFunctions');
+const { minDate, maxDate, menuDate, displayDate, displayDay, dotTotalPrices, displayDateAndTime } = require('../helperFunctions');
 
+const xendit = new Xendit({ secretKey: process.env.XENDIT_SECRET_KEY });
+
+const { Card, EWallet } = xendit;
+const card = new Card({});
+const ewallet = new EWallet({});
 
 router.get('/', isLoggedIn, isAdmin, async (req, res) => {
   const userId = req.user._id;
@@ -33,6 +39,18 @@ router.route('/menu/create')
     await newMenu.save();
     res.redirect('/admin');
   });
+
+router.get('/paymentProof', async (req, res) => {
+  const { orderId, chargeId, paymentMethod } = req.query;
+  const findOrder = await Order.findById(orderId);
+  if(paymentMethod === 'CARD'){
+    const paymentProof = await card.getCharge({ chargeID: chargeId });
+    return res.render('admin/paymentProof', { headTitle: 'Payment Proof', paymentProof, findOrder, displayDateAndTime, dotTotalPrices });
+  } else {
+    const paymentProof = await ewallet.getEWalletChargeStatus({ chargeID: chargeId });
+    return res.render('admin/paymentProof', { headTitle: 'Payment Proof', paymentProof, findOrder, displayDateAndTime, dotTotalPrices });
+  }
+});
 
 router.route('/menu/:menuId')
   .get( async (req, res) => {
@@ -93,7 +111,11 @@ router.get('/orders/:menuId', isLoggedIn, isAdmin, async (req, res) => {
   const findMenu = await Menu.findOne({_id: menuId});
   const menuTitle = findMenu.title;
   const menuDate = findMenu.date;
-  res.render('admin/orders', { headTitle: `Orders for ${menuTitle}`, allOrders, displayDate, displayDay, menuTitle, menuDate });
+  const waitingOrders = await Order.find({ menu: menuId, status: 'Waiting for seller to accept the order' }).populate('menu').populate('owner');
+  const acceptedOrders = await Order.find({ menu: menuId, status: 'Order accepted by seller' }).populate('menu').populate('owner');
+  const rejectedOrders = await Order.find({ menu: menuId, status: 'Order rejected by seller' }).populate('menu').populate('owner');
+  const doneOrders = await Order.find({ menu: menuId, status: 'Order done' }).populate('menu').populate('owner');
+  res.render('admin/orders', { headTitle: `Orders for ${menuTitle}`, allOrders, displayDate, displayDay, menuTitle, menuDate, waitingOrders, acceptedOrders, rejectedOrders, doneOrders });
 });
 
 module.exports = router;

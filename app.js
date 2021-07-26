@@ -8,7 +8,6 @@ const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const flash = require('connect-flash');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // native modules
 const path = require('path');
@@ -63,54 +62,5 @@ app.use('/order', orderRoutes);
 app.use('/admin', adminRoutes);
 
 const PORT = process.env.PORT || 3000;
-
-// app.get('/buatCustomer', async (req, res) => {
-  // list all customers
-  // const allCustomers = await stripe.customers.list({});
-  // const customers = allCustomers.data.map(customer => ({ id: customer.id, name: customer.name, email: customer.email, address: customer.address }));
-  // console.log(customers);
-
-  // delete a customer with a given id
-  // const deleteCustomer = await stripe.customers.del('cus_JSU03SrfK4I5KL');
-  // console.log(deleteCustomer);
-
-//   res.render('section/makeCustomer', { headTitle: 'Make Customer' })
-// });
-
-// app.post('/makeCustomer', async (req, res) => {
-//   const { name, email, address } = req.body;
-//   const customer = await stripe.customers.create({
-//     name,
-//     email,
-//     address: {
-//       line1: address
-//     }
-//   });
-//   req.session.cusId = customer.id;
-//   res.redirect('/customers');
-// });
-
-app.get('/paymentConfirm', async (req, res) => {
-  // const { id } = req.params;
-  // const customer = await stripe.customers.retrieve({
-  //   id
-  // });
-  
-  res.render('section/confirmPay', { headTitle: 'Confirm Payment' });
-});
-const kembali = items => 5000000;
-
-app.post('/create-payment-intent', async(req, res) => {
-  const { items } = req.body;
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: kembali(items),
-    currency: 'idr',
-    customer: req.session.cusId,
-    // receipt_email: 'tes123@mail.com'
-    // status: 'requires_payment_method' / 'requires_confirmation' / 'requires_action'/ 'processing' / 'requires_capture' / 'canceled' / 'succeeded'
-  });
-  delete req.session.cusId;
-  res.send({ clientSecret: paymentIntent.client_secret });
-});
 
 app.listen(PORT, () => { console.log('server running on port 3000') })

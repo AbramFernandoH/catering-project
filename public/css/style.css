@@ -3,6 +3,17 @@
   padding: 0;
 }
 
+input[type="number"] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none;
+}
+
 /* 
 font-style:
 font-family: 'Abril Fatface', cursive;
@@ -109,18 +120,42 @@ main{
 
 /* about us start */
 
-#about-us{
-  min-height: 100vh;
-}
-
-#about-us, #order-menu{
+#about-us, #order-menu, #our-advantages{
   padding: 5% 10%;
 }
 
-#about-us div.our-advantages{
-  display: grid;
-  grid-template-rows: repeat(4, auto);
-  row-gap: 2rem;
+#about-us{
+  background-color: rgba(140, 255, 140, 1);
+}
+
+.about-us-title{
+  color: rgba(179, 45, 112, 1);
+}
+
+#about-us p{
+  color: #299229;
+  line-height: 1.5;
+}
+
+/* About us end */
+
+/* Our Advantages start */
+
+#our-advantages{
+  background-color: rgba(179, 45, 112, .7);
+}
+
+.our-advantages-title{
+  color: rgba(140, 255, 140, 1);
+}
+
+.our-advantages .fas{
+  font-size: 2.5rem;
+  color: rgba(179, 45, 112, 1);
+}
+
+.fast-delivery{
+  margin-top: 1rem;
 }
 
 .fast-delivery, .fresh-food, .delicious, .affordable-prices{
@@ -129,7 +164,8 @@ main{
   justify-content: center;
   padding: 2%;
   width: 70%;
-  border-radius: 10%;
+  border-radius: 15px;
+  background-color: rgba(140, 255, 140, 1);
 }
 
 .fast-delivery h4, .fresh-food h4, .delicious h4, .affordable-prices h4{
@@ -137,11 +173,11 @@ main{
   font-weight: 700;
 }
 .fast-delivery p, .fresh-food p, .delicious p, .affordable-prices p{
-  color: rgba(255, 115, 185, 1);
+  color: rgb(223, 57, 140);
   font-weight: bolder;
 }
 
-/* About us end */
+/* Our Advantages start */
 
 /* Menus this week start */
 
@@ -261,15 +297,18 @@ i.fa-chevron-left, i.fa-chevron-right{
 
 #order-menu{
   margin-top: 18%;
+  color: #B32D70;
 }
 
 #order-menu h1{
   font-weight: 700;
+  font-size: 2.2rem;
 }
 
 #order-menu .form-menu{
   display: grid;
   grid-template-rows: repeat(5, auto);
+  margin-top: 10%;
 }
 
 #order-menu .mb-3 .form-label{
@@ -288,13 +327,13 @@ i.fa-chevron-left, i.fa-chevron-right{
   text-align: center;
   display: grid;
   row-gap: 1.3rem;
-  background-color: #66FFBD;
+  background-color: rgba(140, 255, 140, .8);
   padding: 5% 10% 8%;
 }
 
 #contact-us h1{
   font-weight: 700;
-  color: rgba(179, 45, 112, .9);
+  color: rgba(255, 115, 185, 1);
   font-size: 3rem;
   margin-bottom: 1rem;
 }
@@ -367,7 +406,7 @@ footer{
 
 .register-form{
   display: grid;
-  grid-template-rows: repeat(5, auto);
+  grid-template-rows: repeat(11, auto);
 }
 
 /* Register end */
@@ -546,167 +585,126 @@ footer{
   margin-top: 2%;
 }
 
-/* order-cart end */
-
-/* confirm-payment start */
-
-/* #confirm-payment{
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
+#order-cart .empty-cart{
   display: flex;
   justify-content: center;
-  align-content: center;
-  height: 100vh;
-  width: 100vw;
-  box-sizing: border-box;
+  align-items: center;
 }
 
-#payment-form{
-  width: 30vw;
-  min-width: 500px;
-  align-self: center;
-  box-shadow: 0px 0px 0px 0.5px rgba(50, 50, 93, 0.1),
-    0px 2px 5px 0px rgba(50, 50, 93, 0.1), 0px 1px 1.5px 0px rgba(0, 0, 0, 0.07);
-  border-radius: 7px;
-  padding: 40px;
+/* order-cart end */
+
+/* payment-card start */
+
+#payment-card{
+  display: grid;
+  align-items: center;
+  padding: 18% 10% 8%;
+  min-height: 100vh;
+  background-color: rgba(140, 255, 140, .7);
 }
 
-#payment-form input{
-  border-radius: 6px;
-  margin-bottom: 6px;
-  padding: 12px;
-  border: 1px solid rgba(50, 50, 93, 0.1);
-  height: 44px;
-  font-size: 16px;
-  width: 100%;
-  background: white;
+#payment-card h1{
+  font-weight: 700;
+  color: #468046;
 }
 
-#payment-form .result-message{
-  line-height: 22px;
-  font-size: 16px;
+#payment-card h4{
+  color: #509750;
+  margin-top: 2%;
 }
 
-#payment-form .result-message a{
-  color: rgb(89, 111, 214);
-  font-weight: 600;
-  text-decoration: none;
+#form-payment-card{
+  margin-top: 8%;
+  display: grid;
+  background-color: rgba(179, 45, 112, 1);
+  color: white;
+  border-radius: 5%;
+  padding: 8%;
 }
 
-#confirm-payment .hidden{
-  display: none;
+.submit-card-btn{
+  margin-top: 8%;
+  display: grid;
+  justify-content: center;
 }
 
-#payment-form #card-error{
-  color: rgb(105, 115, 134);
-  text-align: left;
-  font-size: 13px;
-  line-height: 17px;
-  margin-top: 12px;
+.submit-card-btn .pay-btn{
+  background-color: rgba(255, 115, 185, 1);
+  color: white;
+  font-weight: 700;
 }
 
-#payment-form #card-element {
-  border-radius: 4px 4px 0 0 ;
-  padding: 12px;
-  border: 1px solid rgba(50, 50, 93, 0.1);
-  height: 44px;
-  width: 100%;
-  background: white;
+.submit-card-btn .pay-btn:hover{
+  background-color: white;
+  color: rgba(255, 115, 185, 1);
 }
 
-#payment-form #payment-request-button {
-  margin-bottom: 32px;
+/* payment-card end */
+
+/* payment-ovo start */
+
+#payment-ovo{
+  padding: 5% 8% 0;
+  min-height: 100vh;
+  display: grid;
+  align-items: center;
+  background-color: rgba(140, 255, 140, .7);
 }
 
-/* Buttons and links */
-/* #confirm-payment button {
-  background: #5469d4;
-  color: #ffffff;
-  font-family: Arial, sans-serif;
-  border-radius: 0 0 4px 4px;
-  border: 0;
-  padding: 12px 16px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: block;
-  transition: all 0.2s ease;
-  box-shadow: 0px 4px 5.5px 0px rgba(0, 0, 0, 0.07);
-  width: 100%;
-}
-#confirm-payment button:hover {
-  filter: contrast(115%);
-}
-#confirm-payment button:disabled {
-  opacity: 0.5;
-  cursor: default;
+#payment-ovo h1{
+  font-size: 2rem;
+  color: rgba(140, 255, 140, 1);
+  font-weight: 700;
 }
 
-/* spinner/processing state, errors */
-/* #confirm-payment .spinner,
-#confirm-payment .spinner:before,
-#confirm-payment .spinner:after {
-  border-radius: 50%;
+#payment-ovo h3{
+  font-size: 1.2rem;
+  color: rgba(140, 255, 140, 1);
+  font-weight: 700;
 }
-#confirm-payment .spinner {
-  color: #ffffff;
-  font-size: 22px;
-  text-indent: -99999px;
-  margin: 0px auto;
-  position: relative;
-  width: 20px;
-  height: 20px;
-  box-shadow: inset 0 0 0 2px;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
-}
-#confirm-payment .spinner:before,
-#confirm-payment .spinner:after {
-  position: absolute;
-  content: "";
-}
-#confirm-payment .spinner:before {
-  width: 10.4px;
-  height: 20.4px;
-  background: #5469d4;
-  border-radius: 20.4px 0 0 20.4px;
-  top: -0.2px;
-  left: -0.2px;
-  -webkit-transform-origin: 10.4px 10.2px;
-  transform-origin: 10.4px 10.2px;
-  -webkit-animation: loading 2s infinite ease 1.5s;
-  animation: loading 2s infinite ease 1.5s;
-}
-#confirm-payment .spinner:after {
-  width: 10.4px;
-  height: 10.2px;
-  background: #5469d4;
-  border-radius: 0 10.2px 10.2px 0;
-  top: -0.1px;
-  left: 10.2px;
-  -webkit-transform-origin: 0px 10.2px;
-  transform-origin: 0px 10.2px;
-  -webkit-animation: loading 2s infinite ease;
-  animation: loading 2s infinite ease;
-} */
 
-/* confirm-payment end */
+/*
+rgba(62, 179, 62, .7)
+rgba(140, 255, 140, 1)
+rgba(116, 255, 116, 1)
+rgba(179, 45, 112, .7)
+rgba(255, 115, 185, 1)
+*/
+
+.ovo-payment-form{
+  background-color: rgba(179, 45, 112, 1);
+  border-radius: 5%;
+  padding: 8%;
+}
+
+#payment-ovo h3, .ovo-num, .ovo-btn{
+  margin-top: 8%;
+}
+
+.ovo-num p{
+  font-size: .8rem;
+}
+
+.ovo-btn{
+  display: grid;
+  align-items: center;
+}
+
+.ovo-btn button{
+  color: white;
+  font-size: 1.2rem;
+  font-weight: 700;
+  background-color: rgb(93, 13, 139);
+}
+
+.ovo-btn button:hover{
+  background-color: white;
+  color: rgb(93, 13, 139);
+}
+
+/* payment-ovo end */
 
 /* Media Queries */
-
-@media screen and (max-width: 600px) {
-  /* header .heading{
-    top: 0;
-    left: 0;
-    padding: 40% 10%;
-    text-align: center;
-    width: 100%;
-  } */
-  /* #payment-form{
-    width: 80vw;
-  } */
-}
 
 @media screen and (min-width: 590px) {
   /* header .heading{
@@ -732,6 +730,14 @@ footer{
 
   #order-menu{
     margin-top: 13%;
+  }
+
+  #order-cart{
+    padding-top: 15%;
+  }
+
+  #payment-card{
+    padding-top: 16%;
   }
 }
 
@@ -764,6 +770,10 @@ footer{
 
   #my-orders .card img{
     height: 14rem;
+  }
+
+  .ovo-payment-form{
+    padding: 6%;
   }
 }
 
@@ -800,6 +810,34 @@ footer{
   #order-menu{
     margin-top: 10%;
   }
+
+  #order-menu .form-menu{
+    margin-top: 7%;
+  }
+
+  #payment-card{
+    padding-top: 14%;
+  }
+
+  #form-payment-card{
+    padding: 6% 8%;
+  }
+
+  .submit-card-btn{
+    margin-top: 5%;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .fast-delivery, .fresh-food, .delicious, .affordable-prices{
+    width: inherit;
+    min-width: 300px;
+    margin-bottom: 0;
+  }
+
+  .fast-delivery{
+    margin-top: 0;
+  }
 }
 
 @media screen and (min-width: 770px) {
@@ -834,6 +872,19 @@ footer{
     /* grid-area: address; */
     grid-column: 7 / -1;
   }
+
+  #order-cart{
+    padding-top: 12%;
+  }
+
+  #payment-ovo{
+    grid-template-columns: repeat(20, 1fr);
+  }
+
+  .ovo-payment-form{
+    grid-column: 2 / 20;
+  }
+  
 }
 
 @media screen and (min-width: 815px) {
@@ -903,6 +954,13 @@ footer{
     margin-top: 12%;
   }
 
+  #payment-card{
+    padding-top: 12%;
+  }
+
+  .ovo-payment-form{
+    grid-column: 3 / 19;
+  }
 }
 
 @media screen and (min-width: 992px) {
@@ -949,6 +1007,17 @@ footer{
     font-size: 1.7rem;
   }
 
+  .our-advantages .fas{
+    font-size: 3rem;
+  }
+
+  /* .fast-delivery h4, .fresh-food h4, .delicious h4, .affordable-prices h4{
+    
+  }
+  .fast-delivery p, .fresh-food p, .delicious p, .affordable-prices p{
+    
+  } */
+
   #menus-this-week .days{
     grid-template: repeat(3, auto) / repeat(3, 32%);
     column-gap: 2%;
@@ -987,6 +1056,16 @@ footer{
     column-gap: 1rem;
   }
 
+  .checkout-menu{
+    display: grid;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .checkout-menu .form-label{
+    font-size: 2.5rem;
+  }
+
   .menu{
     grid-column: 1 / 7;
   }
@@ -995,7 +1074,15 @@ footer{
     grid-column: 7 / -1;
   }
 
-  .order-message, .total-price, .submit-order{
+  .checkout-quantity{
+    grid-column: 1 / 7;
+  }
+
+  .payment-method{
+    grid-column: 7 / -1;
+  }
+
+  .checkout-menu, .order-message, .total-price, .submit-order{
     grid-column: 1 / -1;
   }
 
@@ -1061,15 +1148,15 @@ footer{
     column-gap: 1rem;
   }
 
-  .register-username{
+  .register-fullname, .register-email, .register-password, .register-city{
     grid-column: 1 / 7;
   }
 
-  .register-email{
+  .register-username, .register-mobile-number, .register-confirm-password, .register-postalCode{
     grid-column: 7 / -1;
   }
 
-  .register-password, .register-address, .register-btn{
+  .register-province, .register-streetLine1,  .register-streetLine2, .register-btn{
     grid-column: 1 / -1;
   }
 
@@ -1095,6 +1182,10 @@ footer{
 
   .menu-admin .title{
     grid-column: 1 / 7;
+  }
+
+  .menu-admin .date{
+    grid-column: 7 / -1;
   }
 
   .menu-admin .day{
@@ -1126,12 +1217,130 @@ footer{
   #my-orders .card .btn{
     padding: 3% 6%;
   }
+
+  #order-cart{
+    padding-top: 8%;
+  }
+
+  #payment-card{
+    padding-top: 10%;
+    padding-bottom: 2%;
+  }
+
+  #form-payment-card{
+    margin-top: 4%;
+    grid-template: repeat(3, auto) / repeat(12, 1fr);
+    column-gap: 2%;
+    padding: 5% 5% 4%;
+  }
+
+  #payment-card h4{
+    margin-top: 0;
+  }
+
+  .card-number, .exp-year{
+    grid-column: 1 / 7;
+  }
+
+  .exp-month, .card-cvn{
+    grid-column: 7 / -1;
+  }
+
+  .submit-card-btn{
+    margin-top: 2%;
+    grid-column: 1 / -1;
+  }
+
+  .ovo-payment-form{
+    display: grid;
+    grid-template: repeat(4, auto) / repeat(12, 1fr);
+    padding: 6% 4%;
+  }
+
+  #payment-ovo h1, #payment-ovo h3{
+    grid-column: 1 / -1;
+  }
+
+  #payment-ovo h1{
+    font-size: 2.3rem;
+  }
+
+  #payment-ovo h3{
+    margin-top: 3%;
+    font-size: 1.5rem;
+  }
+
+  .ovo-num{
+    grid-column: 2 / 12;
+  }
+
+  .ovo-num p{
+    font-size: 1.1rem;
+  }
+
+  .ovo-btn{
+    grid-column: 3 / 11;
+  }
+
+  .ovo-num, .ovo-btn{
+    margin-top: 5%;
+  }
+
+  .ovo-btn button{
+    font-size: 1.5rem;
+  }
+}
+
+@media screen and (min-width: 992px) and (min-height: 700px) {
+  #payment-card h4{
+    margin-top: -2%;
+  }
+
+  #form-payment-card{
+    margin-top: 0;
+  }
+}
+
+@media screen and (min-width: 992px) and (min-height: 800px) {
+  #payment-card h4{
+    margin-top: -6%;
+  }
+
+  #form-payment-card{
+    margin-top: -4%;
+  }
+}
+
+@media screen and (min-width: 992px) and (min-height: 880px) {
+  #payment-card{
+    padding-top: 7%;
+  }
+
+  #payment-card h4{
+    margin-top: -10%;
+  }
+
+  #form-payment-card{
+    margin-top: -8%;
+  }
 }
 
 @media screen and (min-width: 1145px) {
   #testimoni .carousel-item .slider-img{
     width: 30%;
     height: 30%;
+  }
+
+  #payment-ovo{
+    padding: 3% 5% 0;
+  }
+
+  .ovo-payment-form{
+    grid-column: 4 / 18;
+  }
+
+  #payment-card{
+    padding-top: 8%;
   }
 }
 
@@ -1140,7 +1349,7 @@ footer{
     padding: 17% 10%;
   } */
 
-  #menus-this-week h1, #my-orders h1{
+  #menus-this-week h1, #my-orders h1, #our-advantages h1{
     font-size: 3rem;
   }
 
@@ -1166,5 +1375,15 @@ footer{
 
   #my-orders .all-orders h3{
     font-size: 1.9rem;
+  }
+
+  #order-cart{
+    padding-top: 6%;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  #our-advantages .our-advantages .w-100{
+    display: none!important;
   }
 }

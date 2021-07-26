@@ -3,8 +3,10 @@
   <section id="menus-this-week">
     <div class="menus">
       <h1>Menus</h1>
-      <%- include('../partials/flash') %> 
-      <a href="/admin/menu/create" class="btn btn-primary btn-lg text-white">Add a menu</a>
+      <%- include('../partials/flash') %>
+      <div class="admin-buttons d-flex justify-content-evenly my-4">
+        <a href="/admin/menu/create" class="btn btn-primary btn-lg text-white"><i class="fas fa-plus"></i> Add a menu</a>
+      </div>
       <div class="days">
         <% for(let menu of allMenus){ %> 
         <div class="day">
@@ -15,10 +17,10 @@
               <h5 class="card-title"><%= menu.title %></h5>
               <p class="card-text">Date: <%= displayDate(menu.date) %></p>
               <p class="card-text">Description: <%= menu.description %></p>
-              <a class="btn text-white" href="/admin/orders/<%= menu._id %>">All orders fot this menu</a>
-              <a class="btn text-white" href="/admin/menu/<%= menu._id %>">Edit this menu</a>
+              <a class="btn text-white mb-2" href="/admin/orders/<%= menu._id %>">All orders fot this menu</a>
+              <a class="btn text-white mb-2" href="/admin/menu/<%= menu._id %>"><i class="fas fa-pen"></i> Edit this menu</a>
               <form action="/admin/menu/<%= menu._id %>?_method=DELETE" method="post">
-                <button class="btn text-white">Delete this menu</button>
+                <button class="btn text-white"><i class="fas fa-trash"></i> Delete this menu</button>
               </form>
             </div>
           </div>

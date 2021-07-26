@@ -1,17 +1,28 @@
 <%- layout('boilerplate/boilerplate') -%>
 <main>
   <section id="order-menu">
+    <%- include('../partials/flash') %>
     <h1 class="text-center">Order Checkout</h1>
     <form action="/order" method="post" class="form-menu">
       <input type="hidden" name="cartId" value="<%= cart.id %>">
-      <div class="mb-3 menu">
+      <div class="mb-3 checkout-menu">
         <label class="form-label">Menu</label>
-        <p><%= cart.menuTitle %> - <%= cart.menuDate %></p>
+        <img src="<%= menu.images[0].cbImg %>" class="rounded d-block" alt="">
+        <p><%= menu.title %> - <%= cart.menuDate %></p>
         <input type="hidden" name="menuId" value="<%= cart.menu %>">
       </div>
-      <div class="mb-3 quantity">
+      <div class="mb-3 checkout-quantity">
         <label for="quantity" class="form-label">Quantity</label>
         <input type="number" class="form-control" name="quantity" id="quantity" min="1" value="<%= cart.quantity %>" required>
+      </div>
+      <div class="mb-3 payment-method">
+        <label for="payment-method" class="form-label">Payment Method</label>
+        <select class="form-select" id="payment-method" name="paymentMethod">
+          <option value="." selected>Please select one of payment method</option>
+          <option value="COD">CoD ( Cash on Delivery )</option>
+          <option value="CARD">Debit / Credit Card ( Visa, Mastercard, JCB )</option>
+          <option value="EW">E - Wallet ( OVO )</option>
+        </select>
       </div>
       <div class="mb-3 order-message">
         <label for="message" class="form-label">Message (optional)</label>
@@ -23,11 +34,10 @@
       </div>
       <div class="mb-3 total-price">
         <label for="total-price" class="form-label">Total Prices</label>
-        <p id="total-price">Rp 50.000,00</p>
+        <p id="total-price">Rp <%= dotTotalPrices(cart.totalPrices) %>,00</p>
       </div>
       <div class="mb-3 submit-order">
         <button class="btn btn-lg text-white" id="checkout-btn">Checkout</button>
-        <button class="btn btn-primary text-white">Checkout</button>
       </div>
     </form>
     <div class="mt-3">

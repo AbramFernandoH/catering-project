@@ -1,0 +1,20 @@
+<%- layout('boilerplate/boilerplate') -%>
+<main>
+  <section id="payment-ovo">
+    <form action="/payment?paymentMethod=<%= method %>&cartId=<%= cart.id %>" method="post" class="ovo-payment-form">
+      <h1 class="text-center">OVO Payment</h1>
+      <h3 class="text-center">Total Prices:<span class="ms-auto"> Rp<%= dotTotalPrices(cart.totalPrices) %>,00</span></h3>
+      <div class="ovo-num">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" name="mobileNumber" id="mobileNumber" value="<%= findCustomer[0].mobile_number %>" placeholder="Mobile Number">
+          <label for="mobileNumber">Mobile Number</label>
+        </div>
+        <p class="text-white">*your ovo mobile number that will be charge</p>
+      </div>
+      <div class="ovo-btn">
+        <button class="btn">Pay</button>
+      </div>
+    </form>
+  </section>
+  <%- include('../partials/cantGoBack') %> 
+</main>
