@@ -51,18 +51,20 @@ router.route('/register')
     }
 
     if(password === confirmPassword){
-      const newCustomer = await customer.createCustomer({
-        referenceID: `customer_${uuidv4()}`,
-        givenNames: name.firstName,
-        email,
-        mobileNumber,
-        middleName: middleName(name),
-        surname:  surname(name),
-        addresses: [{ country: 'ID', ...addresses }]
-      });
-      const user = new User({ username, email, addresses, customerId: newCustomer.reference_id });
-      const newUser = await User.register(user, password);
-      return req.login(newUser, () => res.redirect('/') );
+      try{
+        const newCustomer = await customer.createCustomer({
+          referenceID: `customer_${uuidv4()}`,
+          givenNames: name.firstName,
+          email,
+          mobileNumber,
+          addresses: [{ country: 'ID', ...addresses }]
+        });
+        const user = new User({ username, email, addresses, customerId: newCustomer.reference_id });
+        const newUser = await User.register(user, password);
+        return req.login(newUser, () => res.redirect('/') );
+      } catch(e){
+        console.log(e);
+      }
     }
 
     req.flash('error', 'Your password and confirm password not match');

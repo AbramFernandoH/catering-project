@@ -704,6 +704,16 @@ rgba(255, 115, 185, 1)
 
 /* payment-ovo end */
 
+/* checkout menu start */
+
+.checkout-menu{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* checkout menu end */
+
 /* Media Queries */
 
 @media screen and (min-width: 590px) {

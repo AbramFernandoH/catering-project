@@ -8,6 +8,7 @@ const session = require('express-session');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const flash = require('connect-flash');
+const MongoStore = require('connect-mongo');
 
 // native modules
 const path = require('path');
@@ -20,7 +21,9 @@ const adminRoutes = require('./routes/admin');
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/catering-project', {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false});
+const dbUrl = process.env.MONGO_ATLAS_DB_URL || 'mongodb://localhost:27017/catering-project';
+
+mongoose.connect(dbUrl, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false });
 
 const db = mongoose.connection;
 db.on('error', console.log.bind(console, "Connection error!"));
@@ -36,12 +39,25 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'));
 app.use(flash());
-app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true, cookie: {
+app.use(flash());
+
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60, // so we dont have to save the session on mongo every single time, we specify the update time for session, in this case 1 day in seconds
+  crypto: {
+    secret: process.env.SESSION_SECRET
+  }
+});
+
+store.on('error', function(e){
+  console.log(e);
+});
+
+app.use(session({ name: 'cateringSession', secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: true, cookie: {
   expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
   maxAge: 1000 * 60 * 60 * 24 * 7
 }
 }));
-app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
